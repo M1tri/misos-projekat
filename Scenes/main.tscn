@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://vbbywsxxdvkx"]
+
+[ext_resource type="Script" uid="uid://dw1m0r1fodqxj" path="res://misos-projekat/Scripts/main.gd" id="1_qqbt1"]
+
+[node name="Root" type="Node2D" unique_id=1284911710]
+script = ExtResource("1_qqbt1")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1098331808]
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=244022003]
+layout_mode = 2
+
+[node name="Input" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1840702366]
+layout_mode = 2
+alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/Input" unique_id=547096396]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Start" type="Button" parent="PanelContainer/VBoxContainer/Input" unique_id=471097093]
+layout_mode = 2
+text = "Start"
+
+[connection signal="text_changed" from="PanelContainer/VBoxContainer/Input/LineEdit" to="." method="_on_line_edit_text_changed"]
