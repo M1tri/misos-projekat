@@ -2,15 +2,16 @@
 
 [ext_resource type="Script" uid="uid://dw1m0r1fodqxj" path="res://misos-projekat/Scripts/main.gd" id="1_qqbt1"]
 [ext_resource type="Script" uid="uid://cakdl0asyyqfq" path="res://misos-projekat/Scripts/tree_visualizer.gd" id="2_f0jms"]
+[ext_resource type="Script" uid="uid://btft4bt3u32u2" path="res://misos-projekat/Scripts/input_analysis.gd" id="3_0nfp2"]
 
 [node name="Root" type="Node2D" unique_id=1284911710]
 script = ExtResource("1_qqbt1")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=1098331808]
-offset_right = 1152.0
-offset_bottom = 648.0
-size_flags_horizontal = 6
-size_flags_vertical = 6
+offset_right = 1920.0
+offset_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=244022003]
 layout_mode = 2
@@ -22,15 +23,81 @@ alignment = 1
 [node name="LineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/Input" unique_id=547096396]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "abracadbra"
 
 [node name="Start" type="Button" parent="PanelContainer/VBoxContainer/Input" unique_id=471097093]
 layout_mode = 2
 text = "Start"
 
-[node name="TreeVisualizer" type="Control" parent="PanelContainer/VBoxContainer" unique_id=711962949]
+[node name="Visualizations" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=116119003]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="TreeVisualizer" type="Control" parent="PanelContainer/VBoxContainer/Visualizations" unique_id=711962949]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.8
 script = ExtResource("2_f0jms")
+
+[node name="InputAnalysis" type="Control" parent="PanelContainer/VBoxContainer/Visualizations" unique_id=1530501200]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("3_0nfp2")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/VBoxContainer/Visualizations/InputAnalysis" unique_id=693691836]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 48
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+horizontal_alignment = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Visualizations" unique_id=1680825011]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="NextStepButton" type="Button" parent="PanelContainer/VBoxContainer/Visualizations/VBoxContainer" unique_id=1449713270]
+layout_mode = 2
+text = "Next step"
+
+[node name="NextStepCooldown" type="Timer" parent="PanelContainer/VBoxContainer/Visualizations/VBoxContainer" unique_id=1490501129]
+one_shot = true
+
+[node name="PrevStepButton" type="Button" parent="PanelContainer/VBoxContainer/Visualizations/VBoxContainer" unique_id=1897122524]
+layout_mode = 2
+text = "Previous step"
+
+[node name="SideBarWrapper" type="Control" parent="PanelContainer/VBoxContainer/Visualizations/VBoxContainer" unique_id=747548096]
+layout_mode = 2
+
+[node name="SideBarTable" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Visualizations/VBoxContainer/SideBarWrapper" unique_id=103787108]
+layout_mode = 0
+offset_top = 4.0
+offset_right = 320.0
+offset_bottom = 4.0
+
+[node name="RandomAhh" type="Timer" parent="." unique_id=319045703]
+wait_time = 0.5
+one_shot = true
 
 [connection signal="text_changed" from="PanelContainer/VBoxContainer/Input/LineEdit" to="." method="_on_line_edit_text_changed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Input/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Visualizations/VBoxContainer/NextStepButton" to="PanelContainer/VBoxContainer/Visualizations/TreeVisualizer" method="_on_next_step_button_pressed"]
+[connection signal="timeout" from="PanelContainer/VBoxContainer/Visualizations/VBoxContainer/NextStepCooldown" to="." method="_on_next_step_cooldown_timeout"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Visualizations/VBoxContainer/PrevStepButton" to="PanelContainer/VBoxContainer/Visualizations/TreeVisualizer" method="_on_prev_step_button_pressed"]
+[connection signal="timeout" from="RandomAhh" to="." method="_on_random_ahh_timeout"]

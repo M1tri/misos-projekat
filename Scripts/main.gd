@@ -4,13 +4,20 @@ const ALPHABET : String = "abcdefghijklmnopqrstuvwxyz0123456789"
 const INT_MAX = 9223372036854775807
 
 @onready var lineEdit : LineEdit = $PanelContainer/VBoxContainer/Input/LineEdit
-@onready var shannonTreeVisualizer = $PanelContainer/VBoxContainer/TreeVisualizer
+@onready var shannonTreeVisualizer = $PanelContainer/VBoxContainer/Visualizations/TreeVisualizer
+@onready var inputAnalysis = $PanelContainer/VBoxContainer/Visualizations/InputAnalysis
 
 var shannon_tree_node_scene : PackedScene = preload("res://misos-projekat/Scenes/tree_node.tscn")
 
 var codes : Dictionary[String, String] = {}
 var steps : Array[String] = []
 var root : ShannonTreeNode = null
+
+var text : String
+var textPos : int
+
+var symbolsTable : Dictionary[String, Symbol] = {}
+var symbolLabels : Dictionary[String, Label] = {}
 
 func _on_line_edit_text_changed(new_text: String) -> void:
 	if (new_text.length() < 1):
@@ -23,16 +30,22 @@ func _on_line_edit_text_changed(new_text: String) -> void:
 		lineEdit.caret_column = cursor_pos - 1
 
 func _on_start_pressed() -> void:
-	var symbols : Dictionary[String, Symbol]
-	for symbol in lineEdit.text:
-		if (symbol in symbols):
-			symbols[symbol].frequency += 1
-		else:
-			symbols[symbol] = Symbol.new(symbol, 1)
+	inputAnalysis.set_text(lineEdit.text)
+	text = lineEdit.text
+	textPos = 0
+	randomAhh.start()
+
+func show_tree():
+	#var symbolsTable : Dictionary[String, Symbol]
+	#for symbol in lineEdit.text:
+	#	if (symbol in symbolsTable):
+	#		symbolsTable[symbol].frequency += 1
+	#	else:
+	#		symbolsTable[symbol] = Symbol.new(symbol, 1)
 	
 	var symbol_array : Array[Symbol] = []
-	for symbol in symbols:
-		symbol_array.append(symbols[symbol])
+	for symbol in symbolsTable:
+		symbol_array.append(symbolsTable[symbol])
 	
 	symbol_array.sort_custom(func (a : Symbol, b : Symbol) : return a.frequency > b.frequency)
 	codes.clear()
@@ -113,3 +126,29 @@ func arr_to_str(array : Array[Symbol]) -> String:
 		ret += "(" + s.text + ", " + str(s.frequency) + ") "
 	
 	return ret 
+
+@onready var nextStepButton : Button = $PanelContainer/VBoxContainer/Visualizations/VBoxContainer/NextStepButton
+func _on_next_step_cooldown_timeout() -> void:
+	nextStepButton.disabled = false
+
+@onready var randomAhh : Timer = $RandomAhh
+@onready var sideBarTable : VBoxContainer = $PanelContainer/VBoxContainer/Visualizations/VBoxContainer/SideBarWrapper/SideBarTable
+@onready var negro = $PanelContainer/VBoxContainer/Visualizations/VBoxContainer/SideBarWrapper
+func _on_random_ahh_timeout() -> void:
+	inputAnalysis.highlight_letter(textPos)
+	var symbol = text[textPos]
+	
+	if symbol in symbolsTable:
+		symbolsTable[symbol].frequency += 1
+		symbolLabels[symbol].text = symbol + " | " + str(symbolsTable[symbol].frequency)
+	else:
+		symbolsTable[symbol] = Symbol.new(symbol, 1)
+		var new_label : Label = Label.new()
+		new_label.text = symbol + " | 1"
+		
+		sideBarTable.add_child(new_label)
+		symbolLabels[symbol] = new_label
+	
+	if textPos+1 < text.length():
+		textPos += 1
+		randomAhh.start()
