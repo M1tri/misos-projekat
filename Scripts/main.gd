@@ -1,6 +1,6 @@
 extends Node2D
 
-const ALPHABET : String = "abcdefghijklmnopqrstuvwxyz0123456789"
+const ALPHABET : String = "abcdefghijklmnopqrstuvwxyz"
 const INT_MAX = 9223372036854775807
 
 @onready var lineEdit : LineEdit = $PanelContainer/VBoxContainer/Input/LineEdit

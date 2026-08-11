@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://cyk2on387cjjy"]
+
+[ext_resource type="Script" uid="uid://hfp1u0vqu8gf" path="res://misos-projekat/Scenes/shannon_fano.gd" id="1_xmkuo"]
+[ext_resource type="Script" uid="uid://c5dp7b77mds6p" path="res://misos-projekat/Scripts/symbol_table_container.gd" id="2_iuynv"]
+[ext_resource type="Script" uid="uid://brpry3lgc68xa" path="res://misos-projekat/Scripts/input_display.gd" id="2_k7tgj"]
+
+[node name="ShannonFanoVisualization" type="Node2D" unique_id=353399440]
+script = ExtResource("1_xmkuo")
+
+[node name="GUI" type="PanelContainer" parent="." unique_id=1971150357]
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI" unique_id=982163589]
+layout_mode = 2
+
+[node name="InputAndCounting" type="VBoxContainer" parent="GUI/HBoxContainer" unique_id=807669536]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+theme_override_constants/separation = 26
+
+[node name="InputMargin" type="MarginContainer" parent="GUI/HBoxContainer/InputAndCounting" unique_id=793836288]
+layout_mode = 2
+theme_override_constants/margin_left = 75
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 75
+theme_override_constants/margin_bottom = 10
+
+[node name="Input" type="HBoxContainer" parent="GUI/HBoxContainer/InputAndCounting/InputMargin" unique_id=877804988]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="MainInput" type="LineEdit" parent="GUI/HBoxContainer/InputAndCounting/InputMargin/Input" unique_id=195445177 groups=["Input"]]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "bdaracaabra"
+
+[node name="StartButton" type="Button" parent="GUI/HBoxContainer/InputAndCounting/InputMargin/Input" unique_id=424280843]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pokreni"
+
+[node name="InputDisplayMargin" type="MarginContainer" parent="GUI/HBoxContainer/InputAndCounting" unique_id=1946864348]
+layout_mode = 2
+
+[node name="InputDisplay" type="RichTextLabel" parent="GUI/HBoxContainer/InputAndCounting/InputDisplayMargin" unique_id=480259465 groups=["InputDisplay"]]
+clip_contents = false
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 48
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+script = ExtResource("2_k7tgj")
+
+[node name="STCMargin" type="MarginContainer" parent="GUI/HBoxContainer/InputAndCounting" unique_id=214650427]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="SymbolTableContainer" type="Control" parent="GUI/HBoxContainer/InputAndCounting/STCMargin" unique_id=2103341306 groups=["SymbolTableContainer"]]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_iuynv")
+
+[node name="Tree" type="VBoxContainer" parent="GUI/HBoxContainer" unique_id=1720450261]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+
+[node name="InputAnalysisTimer" type="Timer" parent="." unique_id=1366409880]
+one_shot = true
+
+[connection signal="pressed" from="GUI/HBoxContainer/InputAndCounting/InputMargin/Input/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="timeout" from="InputAnalysisTimer" to="." method="_on_input_analysis_timer_timeout"]
