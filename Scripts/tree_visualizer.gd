@@ -43,7 +43,6 @@ func DrawTree(root : ShannonTreeNode):
 	
 	CalculateSequence(root, 0)
 	sequence_pos = 0
-	NextStep()
 
 func CountLeaves(node : ShannonTreeNode) -> int:
 	if node.leftChild == null and node.rightChild == null:
@@ -104,26 +103,13 @@ func CalculateSequence(node : ShannonTreeNode, depth : int):
 	if (node.rightChild):
 		CalculateSequence(node.rightChild, depth+1)
 
-func NextStep():
+func NextStep() -> bool:
 	if sequence_pos == -1 or sequence_pos >= sequence.size():
-		return
+		return true
 	
 	for node : ShannonTreeNode in sequence[sequence_pos].nodesToAdd: 
 		add_child(node)
 		tree_nodes.append(node)
 	
 	sequence_pos += 1
-
-@onready var nextStepButton : Button = $"../VBoxContainer/NextStepButton"
-@onready var nextStepTimer : Timer = $"../VBoxContainer/NextStepCooldown"
-
-func _on_next_step_button_pressed() -> void:
-	NextStep()
-	nextStepButton.disabled = true
-	nextStepTimer.start()
-
-func _on_prev_step_button_pressed() -> void:
-	var lastNode : ShannonTreeNode = tree_nodes.pop_back()
-	if (lastNode != null):
-		remove_child(lastNode)
-		sequence_pos -= 1
+	return false
