@@ -16,4 +16,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 16
 text = "abcdefgh"
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
+
+[node name="Line2D" type="Line2D" parent="." unique_id=1662810692]

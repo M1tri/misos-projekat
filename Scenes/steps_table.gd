@@ -41,7 +41,7 @@ func NextStep():
 	if stepsPos < 0 or stepsPos >= steps.size():
 		return
 	
-	var stepLabel : Label = Label.new()
+	var stepLabel : ShannonTableLable = ShannonTableLable.new()
 	stepLabel.text = steps[stepsPos]
 	add_child(stepLabel)
 	stepLabels.append(stepLabel)
@@ -101,7 +101,9 @@ func shannon_fanno(symbols : Array[ShannonSymbol]) -> ShannonTreeNode:
 	var node : ShannonTreeNode = shannon_tree_node_scene.instantiate()
 	node.text = text
 	
-	steps.append("Step " + str(steps.size()+1) + ": " + arr_to_str(left) + " | " + arr_to_str(right))
+	steps.append(
+		"Step " + str(steps.size()+1) + ": " + arr_to_str(symbols) + " -> "  + arr_to_str(left) + " | " + arr_to_str(right)
+		)
 	
 	node.leftChild = shannon_fanno(left)
 	node.rightChild = shannon_fanno(right)
@@ -110,6 +112,7 @@ func shannon_fanno(symbols : Array[ShannonSymbol]) -> ShannonTreeNode:
 
 func arr_to_str(array : Array[ShannonSymbol]) -> String:
 	var ret : String = ""
-	for s in array:
-		ret += "(" + s.text + ", " + str(s.frequency) + ") "
+	for i in range(0, array.size()-1):
+		ret += array[i].text + ", "
+	ret += array.back().text
 	return ret 

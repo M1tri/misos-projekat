@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://c6vs40qfn02jf"]
+
+[ext_resource type="Script" uid="uid://bsjliy3occ8os" path="res://misos-projekat/Scripts/shannon_step_table_lable.gd" id="1_8db3d"]
+
+[node name="ShannonStepTableLable" type="Label" unique_id=1629199210]
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("1_8db3d")

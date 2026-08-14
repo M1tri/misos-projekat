@@ -1,14 +1,42 @@
 [gd_scene format=3 uid="uid://cyk2on387cjjy"]
 
 [ext_resource type="Script" uid="uid://hfp1u0vqu8gf" path="res://misos-projekat/Scenes/shannon_fano.gd" id="1_xmkuo"]
+[ext_resource type="FontFile" uid="uid://b3houofno1e48" path="res://assets/fonts/IndieFlower-Regular.ttf" id="2_8bucj"]
 [ext_resource type="Script" uid="uid://c5dp7b77mds6p" path="res://misos-projekat/Scripts/symbol_table_container.gd" id="2_iuynv"]
 [ext_resource type="Script" uid="uid://brpry3lgc68xa" path="res://misos-projekat/Scripts/input_display.gd" id="2_k7tgj"]
+[ext_resource type="FontFile" uid="uid://damk8qqt17x1c" path="res://assets/fonts/CabinSketch-Bold.ttf" id="3_g5gj0"]
 [ext_resource type="Texture2D" uid="uid://ngj7sbcxh6ew" path="res://assets/clamp128.png" id="4_1q482"]
 [ext_resource type="Script" uid="uid://wsjew6u82ox6" path="res://misos-projekat/Scenes/steps_table.gd" id="4_8gb3r"]
 [ext_resource type="Script" uid="uid://cakdl0asyyqfq" path="res://misos-projekat/Scripts/tree_visualizer.gd" id="5_fxa2o"]
+[ext_resource type="Script" uid="uid://b7vyapbs3nx8o" path="res://misos-projekat/Scripts/spine.gd" id="6_cruaf"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8bucj"]
 bg_color = Color(0.4185313, 0.6438745, 0.67856157, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cruaf"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.5803922, 0.43137255, 0.2901961, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+corner_detail = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5shiy"]
+bg_color = Color(0.15294118, 0.29803923, 0.2627451, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0.4, 0.25882354, 0.15686275, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fxa2o"]
 bg_color = Color(0.5803922, 0.43137255, 0.2901961, 1)
@@ -30,6 +58,19 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 corner_detail = 16
 shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vi1wt"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b66tm"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g5gj0"]
+bg_color = Color(1, 1, 1, 1)
 
 [node name="ShannonFanoVisualization" type="Node2D" unique_id=353399440]
 script = ExtResource("1_xmkuo")
@@ -64,7 +105,14 @@ theme_override_constants/separation = 20
 [node name="MainInput" type="LineEdit" parent="GUI/HBoxContainer/InputAndCounting/InputMargin/Input" unique_id=195445177 groups=["Input"]]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_8bucj")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_cruaf")
 text = "bdaracaabra"
+alignment = 1
+max_length = 12
+caret_blink = true
 
 [node name="StartButton" type="Button" parent="GUI/HBoxContainer/InputAndCounting/InputMargin/Input" unique_id=424280843]
 layout_mode = 2
@@ -73,12 +121,16 @@ text = "Pokreni"
 
 [node name="InputDisplayMargin" type="MarginContainer" parent="GUI/HBoxContainer/InputAndCounting" unique_id=1946864348]
 layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 25
 
 [node name="InputDisplay" type="RichTextLabel" parent="GUI/HBoxContainer/InputAndCounting/InputDisplayMargin" unique_id=480259465 groups=["InputDisplay"]]
 clip_contents = false
 layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("3_g5gj0")
 theme_override_font_sizes/normal_font_size = 42
+theme_override_styles/normal = SubResource("StyleBoxFlat_5shiy")
 bbcode_enabled = true
 text = "a"
 fit_content = true
@@ -96,9 +148,9 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5
-theme_override_constants/margin_left = 10
+theme_override_constants/margin_left = 75
 theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
+theme_override_constants/margin_right = 75
 theme_override_constants/margin_bottom = 10
 
 [node name="WoodBorder" type="Panel" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/STCMargin" unique_id=1132170820]
@@ -123,21 +175,46 @@ script = ExtResource("2_iuynv")
 
 [node name="Clip" type="Sprite2D" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/STCMargin/SymbolTableContainer" unique_id=87034406]
 texture_filter = 1
-position = Vector2(6, -8)
+position = Vector2(205, -8)
 texture = ExtResource("4_1q482")
 
 [node name="Steps" type="MarginContainer" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer" unique_id=2067511098]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_right = 5
+theme_override_constants/margin_left = 75
+theme_override_constants/margin_right = 75
 theme_override_constants/margin_bottom = 10
 
-[node name="Panel" type="Panel" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/Steps" unique_id=1146264352]
+[node name="Notebook" type="HBoxContainer" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/Steps" unique_id=659590817]
 layout_mode = 2
+theme_override_constants/separation = 0
 
-[node name="StepsTable" type="VBoxContainer" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/Steps" unique_id=1516330375 groups=["StepsTable"]]
+[node name="Spine" type="Panel" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/Steps/Notebook" unique_id=1195986282]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.1
+theme_override_styles/panel = SubResource("StyleBoxFlat_vi1wt")
+script = ExtResource("6_cruaf")
+
+[node name="Page" type="MarginContainer" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/Steps/Notebook" unique_id=1441533910]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.9
+
+[node name="PageBackground" type="Panel" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/Steps/Notebook/Page" unique_id=911451180]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.6
+theme_override_styles/panel = SubResource("StyleBoxFlat_b66tm")
+
+[node name="Content" type="MarginContainer" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/Steps/Notebook/Page" unique_id=1059528633]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 10
+
+[node name="StepsTable" type="VBoxContainer" parent="GUI/HBoxContainer/InputAndCounting/VBoxContainer/Steps/Notebook/Page/Content" unique_id=1516330375 groups=["StepsTable"]]
 layout_mode = 2
 script = ExtResource("4_8gb3r")
 
@@ -146,9 +223,22 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.7
 
-[node name="ShannonTreeVisualizer" type="Control" parent="GUI/HBoxContainer/Tree" unique_id=718538646 groups=["ShannonTreeVisualizer"]]
+[node name="MarginContainer" type="MarginContainer" parent="GUI/HBoxContainer/Tree" unique_id=788244621]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Panel" type="Panel" parent="GUI/HBoxContainer/Tree/MarginContainer" unique_id=2078554869]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_g5gj0")
+
+[node name="ShannonTreeVisualizer" type="Control" parent="GUI/HBoxContainer/Tree/MarginContainer" unique_id=718538646 groups=["ShannonTreeVisualizer"]]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
 script = ExtResource("5_fxa2o")
 
 [node name="InputAnalysisTimer" type="Timer" parent="." unique_id=1366409880]

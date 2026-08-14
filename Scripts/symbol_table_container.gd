@@ -3,20 +3,16 @@ extends Control
 
 signal finished_sorting
 
-const SYMBOL_FONT_SIZE_DEFAULT : int = 38
+const SYMBOL_FONT_SIZE_DEFAULT : int = 48
+const SYMBOL_COUNTER_DISTANCE : int = 40
+const DISTANCE_FROM_TABLE_TOP : int = 50
+const SYMBOL_SPACING : int = 5
 
 var active_font_size : int = SYMBOL_FONT_SIZE_DEFAULT
 
 var clip : Sprite2D
 
-func _ready() -> void:
-	for child in get_children():
-		if child is Sprite2D:
-			clip = child as Sprite2D
-
-func _draw() -> void:
-	if clip:
-		clip.position.x = self.size.x/2
+var symbols : Dictionary[String, Symbol] = {}
 
 class Symbol:
 	var symbolText : String
@@ -53,13 +49,23 @@ class Symbol:
 		rotationTween.tween_property(counterLabel, "rotation", deg_to_rad(10), 0.25)
 		rotationTween.tween_property(counterLabel, "rotation", 0, 0.25)
 
-var symbols : Dictionary[String, Symbol] = {}
+func _ready() -> void:
+	for child in get_children():
+		if child is Sprite2D:
+			clip = child as Sprite2D
+
+func _draw() -> void:
+	if clip:
+		clip.position.x = self.size.x/2
+
+func calculate_y_pos(elementNumber : int):
+	return DISTANCE_FROM_TABLE_TOP + (active_font_size + SYMBOL_SPACING) * elementNumber
 
 func adjust_font_size(max_elements : int):
-	var max_y_pos : int = 25 + (active_font_size+2) * max_elements
+	var max_y_pos : int = calculate_y_pos(max_elements)
 	while max_y_pos > (size.y - active_font_size):
 		active_font_size -= 1
-		max_y_pos = (active_font_size+2) * max_elements
+		max_y_pos = calculate_y_pos(max_elements)
 
 func process_symbol(symbolText : String):
 	if symbolText in symbols:
@@ -70,19 +76,25 @@ func process_symbol(symbolText : String):
 	
 	@warning_ignore("integer_division")
 	var symbol_x_pos : int = int(width) / 2
-	var symbol_y_pos : int = 25 + (active_font_size + 2) * symbols.size()
+	var symbol_y_pos : int = calculate_y_pos(symbols.size())
 	
 	var newSymbol : Label = Label.new()
 	newSymbol.text = symbolText
 	newSymbol.add_theme_font_size_override("font_size", active_font_size)
 	newSymbol.add_theme_color_override("font_color", Color.BLACK)
 	
+	@warning_ignore("integer_division")
+	var newSymbolTargetPos : Vector2 = Vector2(
+		symbol_x_pos - newSymbol.size.x/2 - SYMBOL_COUNTER_DISTANCE/2,
+		symbol_y_pos
+	)
+	
 	newSymbol.position.x = -active_font_size
 	newSymbol.position.y = symbol_y_pos
 	newSymbol.modulate.a = 0
-		
+	
 	var tweenPos : Tween = create_tween()
-	tweenPos.tween_property(newSymbol, "position", Vector2(symbol_x_pos-20, symbol_y_pos), 0.5)
+	tweenPos.tween_property(newSymbol, "position", newSymbolTargetPos, 0.5)
 	
 	var tweenOpacity : Tween = create_tween()
 	tweenOpacity.tween_property(newSymbol, "modulate:a", 1, 0.5)
@@ -91,6 +103,12 @@ func process_symbol(symbolText : String):
 	symbolCounterLabel.add_theme_font_size_override("font_size", active_font_size)
 	symbolCounterLabel.add_theme_color_override("font_color", Color.BLACK)
 	
+	@warning_ignore("integer_division")
+	var symbolCounterLabelTargetPos : Vector2 = Vector2(
+		symbol_x_pos + symbolCounterLabel.size.x/2 + SYMBOL_COUNTER_DISTANCE/2,
+		symbol_y_pos
+	)
+	
 	symbolCounterLabel.position.x = -active_font_size
 	symbolCounterLabel.position.y = symbol_y_pos
 	symbolCounterLabel.modulate.a = 0
@@ -98,7 +116,7 @@ func process_symbol(symbolText : String):
 	symbolCounterLabel.position = Vector2(symbolCounterLabel.position.x, symbolCounterLabel.position.y)
 
 	var tweenPosCounter : Tween = create_tween()
-	tweenPosCounter.tween_property(symbolCounterLabel, "position", Vector2(symbol_x_pos+20, symbol_y_pos), 1.0)
+	tweenPosCounter.tween_property(symbolCounterLabel, "position", symbolCounterLabelTargetPos, 1.0)
 	
 	var tweenOpacityCounter : Tween = create_tween()
 	tweenOpacityCounter.tween_property(symbolCounterLabel, "modulate:a", 1, 0.8)
@@ -117,7 +135,7 @@ func sort():
 			)
 	
 	for i in range(0, symbolsArray.size()):
-		var target_y_pos : float = (active_font_size + 2) * i
+		var target_y_pos : float = calculate_y_pos(i)
 		
 		var textLabelTween : Tween = symbolsArray[i].textLabel.create_tween()
 		textLabelTween.tween_property(
