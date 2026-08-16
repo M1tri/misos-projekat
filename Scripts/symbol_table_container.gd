@@ -1,8 +1,6 @@
 class_name SymbolTableContainer
 extends Control
 
-signal finished_sorting
-
 const SYMBOL_FONT_SIZE_DEFAULT : int = 48
 const SYMBOL_COUNTER_DISTANCE : int = 40
 const DISTANCE_FROM_TABLE_TOP : int = 50
@@ -85,7 +83,7 @@ func process_symbol(symbolText : String):
 	
 	@warning_ignore("integer_division")
 	var newSymbolTargetPos : Vector2 = Vector2(
-		symbol_x_pos - newSymbol.size.x/2 - SYMBOL_COUNTER_DISTANCE/2,
+		symbol_x_pos - newSymbol.size.x/2 - SYMBOL_COUNTER_DISTANCE,
 		symbol_y_pos
 	)
 	

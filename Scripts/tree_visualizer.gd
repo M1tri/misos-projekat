@@ -20,15 +20,22 @@ var tree_nodes : Array[ShannonTreeNode] = []
 var sequence : Array[Step] = []
 var sequence_pos : int = -1
 
+var lines : Array[Line2D] = []
+
 func _draw() -> void:
 	draw_grid()
 
 func reset():
 	for tree_node in tree_nodes:
 		tree_node.queue_free()
+	
 	tree_nodes.clear()
 	sequence.clear()
 	sequence_pos = -1
+	
+	for line in lines:
+		line.queue_free()
+	lines.clear()
 	
 	queue_redraw()
 
@@ -110,11 +117,25 @@ func NextStep() -> bool:
 		return true
 	
 	for node : ShannonTreeNode in sequence[sequence_pos].nodesToAdd: 
+		node.draw_line.connect(draw_line_between_nodes)
 		add_child(node)
 		tree_nodes.append(node)
 	
 	sequence_pos += 1
 	return false
+
+func draw_line_between_nodes(node1 : ShannonTreeNode, node2 : ShannonTreeNode):
+	var direction = (node2.target_pos - node1.target_pos).normalized()
+	
+	var start = node1.target_pos + direction*node1.radius
+	var end = node2.target_pos - direction*node2.radius
+	
+	var line : Line2D = Line2D.new()
+	line.points = [start, end]
+	line.default_color = Color.BLACK
+	line.width = 2
+	add_child(line)
+	lines.append(line)
 
 func draw_grid():
 	var cell_size : Vector2i = Vector2i(25, 25)

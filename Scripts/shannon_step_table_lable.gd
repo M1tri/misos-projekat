@@ -3,6 +3,8 @@ extends Label
 
 func _ready() -> void:
 	
+	self.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+	
 	var style : StyleBoxFlat = StyleBoxFlat.new()
 	
 	add_theme_color_override("font_color", Color.BLACK)

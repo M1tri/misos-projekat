@@ -1,0 +1,185 @@
+[gd_scene format=3 uid="uid://cyrmxsl50mip1"]
+
+[ext_resource type="Script" uid="uid://fcr3eb5ckvhx" path="res://misos-projekat/Scripts/arithmetic_coding.gd" id="1_3754d"]
+[ext_resource type="Script" uid="uid://c5dp7b77mds6p" path="res://misos-projekat/Scripts/symbol_table_container.gd" id="1_ym2fs"]
+[ext_resource type="Texture2D" uid="uid://ngj7sbcxh6ew" path="res://assets/clamp128.png" id="2_dyxma"]
+[ext_resource type="Script" uid="uid://b8j58dgb1gwak" path="res://misos-projekat/Scripts/arithmetic_coding_visualizer.gd" id="3_dyxma"]
+[ext_resource type="FontFile" uid="uid://damk8qqt17x1c" path="res://assets/fonts/CabinSketch-Bold.ttf" id="4_syfbx"]
+[ext_resource type="Script" uid="uid://brpry3lgc68xa" path="res://misos-projekat/Scripts/input_display.gd" id="4_v0s86"]
+[ext_resource type="Texture2D" uid="uid://c3raecdq861wd" path="res://assets/sponge64.png" id="4_yo0gj"]
+[ext_resource type="Script" uid="uid://bikyrlsclps0p" path="res://misos-projekat/Scripts/eraser.gd" id="6_x6mlg"]
+[ext_resource type="PackedScene" uid="uid://5df0b4j67vw0" path="res://misos-projekat/Scenes/arithmetic_number_line.tscn" id="9_kk0bk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s8gwj"]
+bg_color = Color(0.41960785, 0.6431373, 0.6784314, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vyj42"]
+bg_color = Color(0.5803922, 0.43137255, 0.2901961, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ym2fs"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dyxma"]
+bg_color = Color(0.15294118, 0.29803923, 0.2627451, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0.4, 0.25882354, 0.15686275, 1)
+corner_radius_top_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x6mlg"]
+bg_color = Color(0.15294118, 0.29803923, 0.2627451, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3754d"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="ArithmeticCoding" type="Node2D" unique_id=124428836]
+script = ExtResource("1_3754d")
+
+[node name="GUI" type="PanelContainer" parent="." unique_id=818716627]
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_s8gwj")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI" unique_id=1211727939]
+layout_mode = 2
+
+[node name="Notepad" type="MarginContainer" parent="GUI/HBoxContainer" unique_id=1770853093]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 500
+
+[node name="Border" type="Panel" parent="GUI/HBoxContainer/Notepad" unique_id=1604389808]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vyj42")
+
+[node name="Paper" type="MarginContainer" parent="GUI/HBoxContainer/Notepad" unique_id=221612126]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Panel" type="Panel" parent="GUI/HBoxContainer/Notepad/Paper" unique_id=286010984]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ym2fs")
+
+[node name="SymbolTableContainer" type="Control" parent="GUI/HBoxContainer/Notepad" unique_id=1762920511 groups=["SymbolTableContainer"]]
+layout_mode = 2
+script = ExtResource("1_ym2fs")
+metadata/_custom_type_script = "uid://c5dp7b77mds6p"
+
+[node name="Clip" type="Sprite2D" parent="GUI/HBoxContainer/Notepad/SymbolTableContainer" unique_id=1336998831]
+texture = ExtResource("2_dyxma")
+
+[node name="InputAndVisual" type="VBoxContainer" parent="GUI/HBoxContainer" unique_id=1706438840]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.8
+
+[node name="Input" type="MarginContainer" parent="GUI/HBoxContainer/InputAndVisual" unique_id=1174324887]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+theme_override_constants/margin_left = 260
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 250
+theme_override_constants/margin_bottom = 25
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI/HBoxContainer/InputAndVisual/Input" unique_id=185218839]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="GUI/HBoxContainer/InputAndVisual/Input/HBoxContainer" unique_id=57341814 groups=["Input"]]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.8
+alignment = 1
+
+[node name="StartButton" type="Button" parent="GUI/HBoxContainer/InputAndVisual/Input/HBoxContainer" unique_id=843639871]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.2
+text = "Pokreni
+"
+
+[node name="InputDisplay" type="MarginContainer" parent="GUI/HBoxContainer/InputAndVisual" unique_id=136073122]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+theme_override_constants/margin_left = 250
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 250
+theme_override_constants/margin_bottom = 10
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GUI/HBoxContainer/InputAndVisual/InputDisplay" unique_id=1338233629 groups=["InputDisplay"]]
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("4_syfbx")
+theme_override_font_sizes/normal_font_size = 42
+theme_override_styles/normal = SubResource("StyleBoxFlat_dyxma")
+bbcode_enabled = true
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_v0s86")
+
+[node name="EraserPanel" type="MarginContainer" parent="GUI/HBoxContainer/InputAndVisual/InputDisplay/RichTextLabel" unique_id=806683355]
+layout_mode = 0
+offset_left = 3.0
+offset_top = -1.0
+offset_right = 1035.0
+offset_bottom = 86.0
+theme_override_constants/margin_left = 1000
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Panel" type="Panel" parent="GUI/HBoxContainer/InputAndVisual/InputDisplay/RichTextLabel/EraserPanel" unique_id=1695366157]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_x6mlg")
+
+[node name="Eraser" type="Sprite2D" parent="GUI/HBoxContainer/InputAndVisual/InputDisplay/RichTextLabel" unique_id=806554740]
+position = Vector2(987, 39)
+scale = Vector2(1, 0.890625)
+texture = ExtResource("4_yo0gj")
+script = ExtResource("6_x6mlg")
+
+[node name="Board" type="MarginContainer" parent="GUI/HBoxContainer/InputAndVisual" unique_id=395223732]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.8
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="BoardPanel" type="Panel" parent="GUI/HBoxContainer/InputAndVisual/Board" unique_id=1316563925]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3754d")
+
+[node name="ArithmeticCodingVisualizer" type="Control" parent="GUI/HBoxContainer/InputAndVisual/Board" unique_id=1424743697 groups=["ACV"]]
+layout_mode = 2
+script = ExtResource("3_dyxma")
+
+[node name="ArithmeticNumberLine" parent="GUI/HBoxContainer/InputAndVisual/Board/ArithmeticCodingVisualizer" unique_id=577717157 instance=ExtResource("9_kk0bk")]
+position = Vector2(107, 80)
+
+[node name="InputAnalysisTimer" type="Timer" parent="." unique_id=1605224814]
+one_shot = true
+
+[connection signal="pressed" from="GUI/HBoxContainer/InputAndVisual/Input/HBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="timeout" from="InputAnalysisTimer" to="." method="_on_input_analysis_timer_timeout"]
