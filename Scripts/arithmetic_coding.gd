@@ -20,7 +20,7 @@ func _ready() -> void:
 
 func _on_start_button_pressed() -> void:
 	inputDisplay.set_new_input_text(input.text)
-	arithmeticCodingVisualizer.draw_number_line()
+	arithmeticCodingVisualizer.arithmetic_compress(input.text)
 
 func start_input_analysis():
 	inputAnalysisTimer.start()
