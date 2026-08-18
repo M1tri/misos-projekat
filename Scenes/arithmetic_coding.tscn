@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" uid="uid://fcr3eb5ckvhx" path="res://misos-projekat/Scripts/arithmetic_coding.gd" id="1_3754d"]
 [ext_resource type="Script" uid="uid://c5dp7b77mds6p" path="res://misos-projekat/Scripts/symbol_table_container.gd" id="1_ym2fs"]
-[ext_resource type="Texture2D" uid="uid://ngj7sbcxh6ew" path="res://assets/clamp128.png" id="2_dyxma"]
+[ext_resource type="Texture2D" uid="uid://ngj7sbcxh6ew" path="res://misos-projekat/assets/clamp128.png" id="2_dyxma"]
 [ext_resource type="Script" uid="uid://b8j58dgb1gwak" path="res://misos-projekat/Scripts/arithmetic_coding_visualizer.gd" id="3_dyxma"]
-[ext_resource type="FontFile" uid="uid://damk8qqt17x1c" path="res://assets/fonts/CabinSketch-Bold.ttf" id="4_syfbx"]
+[ext_resource type="FontFile" uid="uid://damk8qqt17x1c" path="res://misos-projekat/assets/fonts/CabinSketch-Bold.ttf" id="4_syfbx"]
 [ext_resource type="Script" uid="uid://brpry3lgc68xa" path="res://misos-projekat/Scripts/input_display.gd" id="4_v0s86"]
-[ext_resource type="Texture2D" uid="uid://c3raecdq861wd" path="res://assets/sponge64.png" id="4_yo0gj"]
+[ext_resource type="Texture2D" uid="uid://c3raecdq861wd" path="res://misos-projekat/assets/sponge64.png" id="4_yo0gj"]
 [ext_resource type="Script" uid="uid://bikyrlsclps0p" path="res://misos-projekat/Scripts/eraser.gd" id="6_x6mlg"]
 [ext_resource type="PackedScene" uid="uid://5df0b4j67vw0" path="res://misos-projekat/Scenes/arithmetic_number_line.tscn" id="9_kk0bk"]
 
@@ -43,6 +43,12 @@ bg_color = Color(0.15294118, 0.29803923, 0.2627451, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3754d"]
 bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(5, 5)
 
 [node name="ArithmeticCoding" type="Node2D" unique_id=124428836]
 script = ExtResource("1_3754d")
@@ -55,37 +61,50 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_s8gwj")
 [node name="HBoxContainer" type="HBoxContainer" parent="GUI" unique_id=1211727939]
 layout_mode = 2
 
-[node name="Notepad" type="MarginContainer" parent="GUI/HBoxContainer" unique_id=1770853093]
+[node name="VBoxContainer" type="VBoxContainer" parent="GUI/HBoxContainer" unique_id=1348547056]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.2
+
+[node name="Notepad" type="MarginContainer" parent="GUI/HBoxContainer/VBoxContainer" unique_id=1770853093]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.4
 theme_override_constants/margin_left = 50
 theme_override_constants/margin_top = 100
 theme_override_constants/margin_right = 50
-theme_override_constants/margin_bottom = 500
 
-[node name="Border" type="Panel" parent="GUI/HBoxContainer/Notepad" unique_id=1604389808]
+[node name="Border" type="Panel" parent="GUI/HBoxContainer/VBoxContainer/Notepad" unique_id=1604389808]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_vyj42")
 
-[node name="Paper" type="MarginContainer" parent="GUI/HBoxContainer/Notepad" unique_id=221612126]
+[node name="Paper" type="MarginContainer" parent="GUI/HBoxContainer/VBoxContainer/Notepad" unique_id=221612126]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Panel" type="Panel" parent="GUI/HBoxContainer/Notepad/Paper" unique_id=286010984]
+[node name="Panel" type="Panel" parent="GUI/HBoxContainer/VBoxContainer/Notepad/Paper" unique_id=286010984]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ym2fs")
 
-[node name="SymbolTableContainer" type="Control" parent="GUI/HBoxContainer/Notepad" unique_id=1762920511 groups=["SymbolTableContainer"]]
+[node name="SymbolTableContainer" type="Control" parent="GUI/HBoxContainer/VBoxContainer/Notepad" unique_id=1762920511 groups=["SymbolTableContainer"]]
 layout_mode = 2
 script = ExtResource("1_ym2fs")
 metadata/_custom_type_script = "uid://c5dp7b77mds6p"
 
-[node name="Clip" type="Sprite2D" parent="GUI/HBoxContainer/Notepad/SymbolTableContainer" unique_id=1336998831]
+[node name="Clip" type="Sprite2D" parent="GUI/HBoxContainer/VBoxContainer/Notepad/SymbolTableContainer" unique_id=1336998831]
 texture = ExtResource("2_dyxma")
+
+[node name="MarginContainer" type="MarginContainer" parent="GUI/HBoxContainer/VBoxContainer" unique_id=59964172]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/VBoxContainer/MarginContainer" unique_id=1847232379]
+layout_mode = 2
 
 [node name="InputAndVisual" type="VBoxContainer" parent="GUI/HBoxContainer" unique_id=1706438840]
 layout_mode = 2
@@ -122,9 +141,9 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.1
 theme_override_constants/margin_left = 250
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 250
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_bottom = 20
 
 [node name="RichTextLabel" type="RichTextLabel" parent="GUI/HBoxContainer/InputAndVisual/InputDisplay" unique_id=1338233629 groups=["InputDisplay"]]
 layout_mode = 2
@@ -163,7 +182,6 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.8
 theme_override_constants/margin_left = 50
-theme_override_constants/margin_top = 50
 theme_override_constants/margin_right = 50
 theme_override_constants/margin_bottom = 50
 

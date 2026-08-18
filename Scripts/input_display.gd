@@ -8,11 +8,13 @@ var textPos : int = -1
 
 var eraser : Eraser
 var eraserPanel : MarginContainer
+var eraser_default_pos : Vector2
 
 func _ready() -> void:
 	for child in get_children():
 		if child is Sprite2D:
 			eraser = child
+			eraser_default_pos = eraser.position
 		elif child is MarginContainer:
 			eraserPanel = child
 
@@ -37,20 +39,23 @@ func erase():
 	)
 	
 	@warning_ignore("integer_division")
-	eraserTween.tween_property(
+	await eraserTween.tween_property(
 		eraser, 
 		"position:x",
-		 self.size.x-eraser.texture.get_width()/2, 
+		eraser_default_pos.x, 
 		0.5
-	).finished.connect(finish_setting_input)
+	).finished
 
 func set_new_input_text(new_input_text : String):
+	if inputText.length() != 0:
+		await erase()
+	
 	eraserPanel.size = self.size
 	eraserPanel.add_theme_constant_override("margin_left", eraser.position.x)
 	
 	inputText = new_input_text
 	textPos = 0
-	erase()
+	finish_setting_input()
 
 func finish_setting_input():
 	eraser.stop_rotating()

@@ -19,6 +19,7 @@ func stop_rotating():
 
 func change_rotation_direction():
 	if not is_rotating:
+		rotation = 0
 		return
 	
 	direction *= -1

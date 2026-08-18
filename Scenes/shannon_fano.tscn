@@ -1,19 +1,19 @@
 [gd_scene format=3 uid="uid://cyk2on387cjjy"]
 
 [ext_resource type="Script" uid="uid://hfp1u0vqu8gf" path="res://misos-projekat/Scenes/shannon_fano.gd" id="1_xmkuo"]
-[ext_resource type="FontFile" uid="uid://b3houofno1e48" path="res://assets/fonts/IndieFlower-Regular.ttf" id="2_8bucj"]
+[ext_resource type="FontFile" uid="uid://b3houofno1e48" path="res://misos-projekat/assets/fonts/IndieFlower-Regular.ttf" id="2_8bucj"]
 [ext_resource type="Script" uid="uid://c5dp7b77mds6p" path="res://misos-projekat/Scripts/symbol_table_container.gd" id="2_iuynv"]
 [ext_resource type="Script" uid="uid://brpry3lgc68xa" path="res://misos-projekat/Scripts/input_display.gd" id="2_k7tgj"]
-[ext_resource type="FontFile" uid="uid://damk8qqt17x1c" path="res://assets/fonts/CabinSketch-Bold.ttf" id="3_g5gj0"]
-[ext_resource type="Texture2D" uid="uid://ngj7sbcxh6ew" path="res://assets/clamp128.png" id="4_1q482"]
+[ext_resource type="FontFile" uid="uid://damk8qqt17x1c" path="res://misos-projekat/assets/fonts/CabinSketch-Bold.ttf" id="3_g5gj0"]
+[ext_resource type="Texture2D" uid="uid://ngj7sbcxh6ew" path="res://misos-projekat/assets/clamp128.png" id="4_1q482"]
 [ext_resource type="Script" uid="uid://wsjew6u82ox6" path="res://misos-projekat/Scenes/steps_table.gd" id="4_8gb3r"]
 [ext_resource type="Script" uid="uid://cakdl0asyyqfq" path="res://misos-projekat/Scripts/tree_visualizer.gd" id="5_fxa2o"]
-[ext_resource type="Texture2D" uid="uid://c3raecdq861wd" path="res://assets/sponge64.png" id="5_vi1wt"]
+[ext_resource type="Texture2D" uid="uid://c3raecdq861wd" path="res://misos-projekat/assets/sponge64.png" id="5_vi1wt"]
 [ext_resource type="Script" uid="uid://bikyrlsclps0p" path="res://misos-projekat/Scripts/eraser.gd" id="6_b66tm"]
 [ext_resource type="Script" uid="uid://b7vyapbs3nx8o" path="res://misos-projekat/Scripts/spine.gd" id="6_cruaf"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8bucj"]
-bg_color = Color(0.4185313, 0.6438745, 0.67856157, 1)
+bg_color = Color(0.60784316, 1, 0.7058824, 0.83137256)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cruaf"]
 bg_color = Color(1, 1, 1, 1)
@@ -112,10 +112,11 @@ theme_override_constants/separation = 20
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_placeholder_color = Color(0.6059017, 1, 0.20270237, 0.6)
 theme_override_fonts/font = ExtResource("2_8bucj")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_cruaf")
-text = "bdaracaabra"
+placeholder_text = "Unesite reč ✏️"
 alignment = 1
 max_length = 12
 caret_blink = true
@@ -147,8 +148,8 @@ script = ExtResource("2_k7tgj")
 [node name="Eraser" type="Sprite2D" parent="GUI/HBoxContainer/InputAndCounting/InputDisplayMargin/InputDisplay" unique_id=1715713805]
 z_index = 1
 texture_filter = 1
-position = Vector2(518, 31.00003)
-rotation = 0.37350047
+position = Vector2(510, 31)
+scale = Vector2(0.875, 0.8750005)
 texture = ExtResource("5_vi1wt")
 script = ExtResource("6_b66tm")
 
@@ -251,8 +252,8 @@ size_flags_stretch_ratio = 0.7
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 50
-theme_override_constants/margin_right = 10
+theme_override_constants/margin_top = 72
+theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 10
 
 [node name="Panel" type="Panel" parent="GUI/HBoxContainer/Tree/MarginContainer" unique_id=2078554869]
