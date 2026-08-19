@@ -71,20 +71,18 @@ func finish_setting_input():
 			set_new_input.emit()
 			)
 
-func consume_char() -> String:
-	if textPos < 0 or textPos >= inputText.length():
-		return ""
-	
-	var curr : String = inputText[textPos]
+func highlight_char(char_pos : int):
+	if char_pos < 0 or char_pos >= inputText.length():
+		return
 	
 	var new_label_text : String = ""
 	for i in range(0, inputText.length()):
 		var letter : String = inputText[i]
-		if i == textPos:
+		if i == char_pos:
 			letter = "[color=red]" + letter + "[/color]"
 		new_label_text += letter
 	
-	textPos += 1
 	self.text = new_label_text
-	
-	return curr
+
+func reset_highlight():
+	self.text = inputText

@@ -8,7 +8,7 @@ var shannon_tree_node_scene : PackedScene = preload("res://misos-projekat/Scenes
 var codes : Dictionary[String, String] = {}
 var steps : Array[String] = []
 var stepsPos : int = -1
-var stepLabels : Array[Label] = []
+var stepLabels : Array[ShannonTableLable] = []
 
 class ShannonSymbol:
 	var text : String
@@ -31,6 +31,11 @@ func calculate_shannon_tree(message : String) -> ShannonTreeNode:
 	var symbols : Array[ShannonSymbol] = []
 	for s in symbolFrequencies:
 		symbols.append(ShannonSymbol.new(s, symbolFrequencies[s]))
+	
+	symbols.sort_custom(
+		func (s1 : ShannonSymbol, s2: ShannonSymbol):
+			return s1.frequency > s2.frequency
+			)
 	
 	var root : ShannonTreeNode = shannon_fanno(symbols)
 	stepsPos = 0
@@ -101,8 +106,13 @@ func shannon_fanno(symbols : Array[ShannonSymbol]) -> ShannonTreeNode:
 	var node : ShannonTreeNode = shannon_tree_node_scene.instantiate()
 	node.text = text
 	
+	var step_text : String = str(steps.size()+1) + ": "
+	step_text += arr_to_str(symbols) + " → "
+	step_text += arr_to_str(left) + " [[color=red]" + str(arr_sum(left)) + "[/color]]"
+	step_text += " | " + arr_to_str(right) + " [[color=red]" + str(arr_sum(right)) + "[/color]]"
+	
 	steps.append(
-		"Step " + str(steps.size()+1) + ": " + arr_to_str(symbols) + " -> "  + arr_to_str(left) + " | " + arr_to_str(right)
+		 step_text
 		)
 	
 	node.leftChild = shannon_fanno(left)
@@ -110,9 +120,20 @@ func shannon_fanno(symbols : Array[ShannonSymbol]) -> ShannonTreeNode:
 	
 	return node
 
+func get_code(symbol : String) -> String:
+	if symbol not in codes:
+		return ""
+	return codes[symbol]
+
 func arr_to_str(array : Array[ShannonSymbol]) -> String:
 	var ret : String = ""
 	for i in range(0, array.size()-1):
-		ret += array[i].text + ", "
+		ret += array[i].text + " "
 	ret += array.back().text
 	return ret 
+
+func arr_sum(array : Array[ShannonSymbol]) -> int:
+	var sum : int = 0
+	for s in array:
+		sum += s.frequency
+	return sum

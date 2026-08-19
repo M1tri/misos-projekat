@@ -1,5 +1,5 @@
 class_name ShannonTableLable
-extends Label
+extends RichTextLabel
 
 func _ready() -> void:
 	
@@ -7,7 +7,11 @@ func _ready() -> void:
 	
 	var style : StyleBoxFlat = StyleBoxFlat.new()
 	
-	add_theme_color_override("font_color", Color.BLACK)
+	fit_content = true
+	bbcode_enabled = true
+	
+	add_theme_font_size_override("normal_font_size", 24)
+	add_theme_color_override("default_color", Color.BLACK)
 	
 	style.draw_center = false
 	

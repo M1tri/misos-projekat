@@ -1,6 +1,8 @@
 class_name ArithmeticNumberLine
 extends Node2D
 
+signal finished_drawing
+
 class SymbolInterval:
 	var start : float
 	var end : float
@@ -19,11 +21,17 @@ const TOTAL_HEIGHT : int = 50
 var lineLength : float = 200
 var symbol_subintervals : Dictionary[String, SymbolInterval] = {}
 
+var interval_start : float
+var interval_end : float
+
 func draw_number_line(points : Array[float], symbols : Array[String]):
 	assert(symbols.size() == points.size()-1)
 	
+	interval_start = points.front()
+	interval_end = points.back()
+	
 	add_vertical_line(0, 40)
-	add_label(Vector2(0, 0), Vector2(0, 40), str(points[0]).pad_decimals(5))
+	add_label(Vector2(0, 0), Vector2(0, 40), str(points[0]).pad_decimals(6))
 	
 	var intervalEnd : Line2D = add_vertical_line(0, 40)
 	
@@ -38,7 +46,7 @@ func draw_number_line(points : Array[float], symbols : Array[String]):
 			add_label(
 			Vector2(lineLength, 0), 
 			Vector2(lineLength, 40), 
-			str(points.back()).pad_decimals(5)
+			str(points.back()).pad_decimals(6)
 		)
 	)
 	
@@ -55,12 +63,13 @@ func draw_number_line(points : Array[float], symbols : Array[String]):
 			0,
 			lineLength,
 			1.5
-	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT).finished.connect(
-		func ():
-			mark_points(points, symbols)
-	)
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	
 	add_child(baseLine)
+	
+	await baseLineTween.finished
+	
+	mark_points(points, symbols)
 
 func mark_points(points : Array[float], symbols : Array[String]):
 	var start : float = points.front()
@@ -73,6 +82,8 @@ func mark_points(points : Array[float], symbols : Array[String]):
 		var x_pos : float = ((points[i] - start) / intervalSize) * lineLength
 		var line : Line2D = add_vertical_line(x_pos, 0)
 		var lineTween : Tween = line.create_tween()
+		
+		var tween_index : int = i
 		lineTween.tween_method(
 			func(t):
 				line.points[0].y = -t/2
@@ -82,16 +93,33 @@ func mark_points(points : Array[float], symbols : Array[String]):
 			1.6
 		).set_trans(Tween.TRANS_BACK).finished.connect(
 			func(): 
-				add_label(Vector2(x_pos, 0), Vector2(x_pos, 20), str(points[i]).pad_decimals(5))
-				)
+				add_label(
+					Vector2(x_pos, 0), 
+					Vector2(x_pos, 20), 
+					str(points[i]).pad_decimals(6)).finished.connect(
+						func():
+							if tween_index == points.size()-2:
+								finished_drawing.emit()
+							)
+					)
+				
+		add_label(
+			Vector2((prev_x+x_pos)/2, 0), 
+			Vector2((prev_x+x_pos)/2, -20), 
+			symbols[i-1]
+		) 
 		
-		await get_tree().create_timer(0.4).timeout
-		add_label(Vector2((prev_x+x_pos)/2, 0), Vector2((prev_x+x_pos)/2, -20), symbols[i-1]) 
 		symbol_subintervals[symbols[i-1]] = SymbolInterval.new(prev_x, x_pos, points[i-1], points[i])
 		prev_x = x_pos
+		
+		await get_tree().create_timer(0.2).timeout
 	
-	await get_tree().create_timer(0.4).timeout
-	add_label(Vector2((prev_x+lineLength)/2, 0), Vector2((prev_x+lineLength)/2, -20), symbols.back()) 
+	add_label(
+		Vector2((prev_x+lineLength)/2, 0), 
+		Vector2((prev_x+lineLength)/2, -20), 
+		symbols.back()
+	)
+		
 	symbol_subintervals[symbols.back()] = SymbolInterval.new(
 		prev_x,
 		lineLength, 
@@ -108,7 +136,7 @@ func add_vertical_line(x_pos : float, total_height : float) -> Line2D:
 	
 	return line
 
-func add_label(start_pos : Vector2, end_pos : Vector2, text : String):
+func add_label(start_pos : Vector2, end_pos : Vector2, text : String) -> Tween:
 	var label : Label = Label.new()
 	label.text = text
 	label.add_theme_color_override("font_color", Color.BLACK)
@@ -132,15 +160,17 @@ func add_label(start_pos : Vector2, end_pos : Vector2, text : String):
 		1.0, 
 		.5
 	)
+	
+	return labelAlphaTween
 
 func get_symbol_interval(symbol : String) -> Array[float]:
 	if symbol in symbol_subintervals:
 		return [symbol_subintervals[symbol].start, symbol_subintervals[symbol].end]
 	return []
 
-func mark_interval_midpoint(symbol : String):
+func mark_interval_midpoint(symbol : String) -> float:
 	if symbol not in symbol_subintervals:
-		return
+		return -1
 	
 	var interval : SymbolInterval = symbol_subintervals[symbol]
 	
@@ -205,4 +235,30 @@ func mark_interval_midpoint(symbol : String):
 	).set_trans(Tween.TRANS_BACK).finished
 	
 	var midPointNum : float = interval.start_num + (interval.end_num-interval.start_num)/2
-	add_label(Vector2(midPoint, 0), Vector2(midPoint, 20), str(midPointNum).pad_decimals(5))
+	add_label(Vector2(midPoint, 0), Vector2(midPoint, 20), str(midPointNum).pad_decimals(6))
+	
+	return midPointNum
+
+func mark_point(value : float):
+	if value < interval_start or value > interval_end:
+		return
+	
+	var interval_size : float = interval_end-interval_start
+	
+	var x_cord : float = ((value-interval_start) / interval_size) * lineLength
+	
+	var circle : Polygon2D = Polygon2D.new()
+	circle.color = Color.RED
+	var circlePoints : Array[Vector2] = []
+	var seg : int = 32
+	var angle_step : float = 2*PI / seg
+	
+	var point_radius : float = 5
+	
+	circlePoints.clear()
+	for i in range(seg+1):
+		circlePoints.append(point_radius * Vector2(cos(i*angle_step), sin(i*angle_step)))
+	circle.polygon = circlePoints
+	
+	circle.position.x = x_cord
+	add_child(circle)

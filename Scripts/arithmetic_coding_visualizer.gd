@@ -1,10 +1,16 @@
 class_name ArithmeticCodingVisualizer
 extends Control
 
-const TOP_PADDING : int = 50
+const TOP_PADDING : int = 40
 
 var number_lines : Array[ArithmeticNumberLine] = []
 var numberLine_spacing : float
+
+signal processing_symbol(symbolPos : int)
+
+var other_lines : Array[Line2D] = []
+
+var code : float
 
 func _draw() -> void:
 	draw_grid()
@@ -28,6 +34,10 @@ func reset():
 	for n in number_lines:
 		n.queue_free()
 	number_lines.clear()
+	
+	for n in other_lines:
+		n.queue_free()
+	other_lines.clear()
 
 func calculate_numberLine_spacing(total_lines : int):
 	var total_space : float = (size.y - TOP_PADDING)
@@ -38,7 +48,6 @@ func get_number_line_y_pos(prev_number_lines):
 	return TOP_PADDING + prev_number_lines * numberLine_spacing
 
 func arithmetic_compress(message : String):
-	reset()
 	calculate_numberLine_spacing(message.length())
 	var symbol_percentages : Dictionary[String, float] = {}
 	
@@ -50,16 +59,14 @@ func arithmetic_compress(message : String):
 	
 	for s in symbol_percentages:
 		symbol_percentages[s] = symbol_percentages[s] / message.length()
-		#print(s + " : " + str(symbol_percentages[s]))
-	#print("----------------")
 	
 	var points : Array[float] = get_points(0, 1, symbol_percentages)
 	var symbols : Array[String] = symbol_percentages.keys()
 	
-	draw_number_line(points, symbols)
-	await get_tree().create_timer(4).timeout
-
+	await draw_number_line(points, symbols)
+	
 	for i in range(0, message.length()-1):
+		processing_symbol.emit(i)
 		var pos : int = symbols.find(message[i])
 		
 		assert(pos != -1, "Should not happen, every symbol from message has to be here")
@@ -70,10 +77,10 @@ func arithmetic_compress(message : String):
 		var end : float = points[pos+1]
 		
 		points = get_points(start, end, symbol_percentages)
-		draw_number_line(points, symbols)
-		await get_tree().create_timer(4).timeout
+		await draw_number_line(points, symbols)
 	
-	number_lines.back().mark_interval_midpoint(message[message.length()-1])
+	processing_symbol.emit(message.length()-1)
+	code = await number_lines.back().mark_interval_midpoint(message[message.length()-1])
 
 func add_lines(symbolInterval : Array[float]):
 		var lastNumberLine : ArithmeticNumberLine = number_lines.back()
@@ -98,27 +105,9 @@ func add_lines(symbolInterval : Array[float]):
 			get_number_line_y_pos(number_lines.size())
 		)
 		
-		var direction : Vector2 = nextNumberLineStart-subIntervalStart
-		var start_line_slope : float = abs(direction.angle_to(Vector2.DOWN))
-		var start_line_length : float = remap(start_line_slope, 0, PI/2, 0.8, 0.95)
-		
-		print("***")
-		print(subIntervalStart)
-		print(nextNumberLineStart)
-		print(start_line_slope)
-		print("***")
-		
-		draw_shortened_pointed_line(subIntervalStart, nextNumberLineStart, start_line_length, 2.0)
-		
-		direction = nextNumberLineEnd-subIntervalEnd
-		var end_line_slope : float = abs(direction.angle_to(Vector2.DOWN))
-		var end_line_length : float = remap(end_line_slope, 0, PI/2, 0.8, .95)
-		
-		draw_shortened_pointed_line(subIntervalEnd, nextNumberLineEnd, end_line_length, 2.0)
-		
 		var subIntervalLine : Line2D = Line2D.new()
 		
-		subIntervalLine.default_color = Color.REBECCA_PURPLE
+		subIntervalLine.default_color = Color.GREEN
 		subIntervalLine.width = 6
 		
 		subIntervalLine.points = [
@@ -127,6 +116,41 @@ func add_lines(symbolInterval : Array[float]):
 		]
 		
 		add_child(subIntervalLine)
+		other_lines.append(subIntervalLine)
+		
+		var subIntervalFlashingTween : Tween = create_tween()
+		
+		for i in range(5):
+				subIntervalFlashingTween.tween_property(
+					subIntervalLine,
+					"default_color",
+					Color.GREEN if i % 2 == 0 else Color.BLACK,
+					.5 
+				)
+
+		await subIntervalFlashingTween.finished
+		
+		var red_line : Line2D = Line2D.new()
+		red_line.default_color = Color.GREEN
+		red_line.width = 6
+		
+		red_line.points = [
+			subIntervalStart,
+			subIntervalEnd
+		]
+		
+		add_child(red_line)
+		other_lines.append(red_line)
+		
+		var direction : Vector2 = nextNumberLineStart-subIntervalStart
+		var start_line_slope : float = abs(direction.angle_to(Vector2.DOWN))
+		var start_line_length : float = remap(start_line_slope, 0, PI/2, 0.8, 0.95)
+		draw_shortened_pointed_line(subIntervalStart, nextNumberLineStart, start_line_length, 2.0)
+		
+		direction = nextNumberLineEnd-subIntervalEnd
+		var end_line_slope : float = abs(direction.angle_to(Vector2.DOWN))
+		var end_line_length : float = remap(end_line_slope, 0, PI/2, 0.8, .95)
+		draw_shortened_pointed_line(subIntervalEnd, nextNumberLineEnd, end_line_length, 2.0)
 		
 		var subIntervalLineTween : Tween = subIntervalLine.create_tween()
 		await subIntervalLineTween.tween_method(
@@ -163,6 +187,7 @@ func draw_shortened_pointed_line(start : Vector2, end : Vector2, length_percenta
 	]
 	
 	add_child(line)
+	other_lines.append(line)
 	
 	var lineTween : Tween = line.create_tween()
 	await lineTween.tween_method(
@@ -198,6 +223,7 @@ func draw_shortened_pointed_line(start : Vector2, end : Vector2, length_percenta
 	)
 	
 	add_child(arrow_line1)
+	other_lines.append(arrow_line1)
 	
 	var arrow_line2 : Line2D = Line2D.new()
 	var arrow_line2Tween : Tween = create_tween()
@@ -214,6 +240,7 @@ func draw_shortened_pointed_line(start : Vector2, end : Vector2, length_percenta
 	arrow_line2.points = [lineEnd, arrow_tip2]
 	
 	add_child(arrow_line2)
+	other_lines.append(arrow_line2)
 
 func get_points(start : float, end : float, symbol_percentages) -> Array[float]:
 	var points : Array[float] = []
@@ -237,3 +264,5 @@ func draw_number_line(points : Array[float], symbols : Array[String]):
 	add_child(numberLine)
 	number_lines.append(numberLine)
 	numberLine.draw_number_line(points, symbols)
+	
+	await numberLine.finished_drawing

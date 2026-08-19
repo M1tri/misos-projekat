@@ -11,6 +11,8 @@
 [ext_resource type="Texture2D" uid="uid://c3raecdq861wd" path="res://misos-projekat/assets/sponge64.png" id="5_vi1wt"]
 [ext_resource type="Script" uid="uid://bikyrlsclps0p" path="res://misos-projekat/Scripts/eraser.gd" id="6_b66tm"]
 [ext_resource type="Script" uid="uid://b7vyapbs3nx8o" path="res://misos-projekat/Scripts/spine.gd" id="6_cruaf"]
+[ext_resource type="Script" uid="uid://dr3tkw1vbudag" path="res://misos-projekat/Scenes/PaperPanel.gd" id="11_5shiy"]
+[ext_resource type="Script" uid="uid://cct1lpk2w21fn" path="res://misos-projekat/Scenes/RicherLabel.gd" id="13_a4oyw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8bucj"]
 bg_color = Color(0.60784316, 1, 0.7058824, 0.83137256)
@@ -111,6 +113,7 @@ theme_override_constants/separation = 20
 [node name="MainInput" type="LineEdit" parent="GUI/HBoxContainer/InputAndCounting/InputMargin/Input" unique_id=195445177 groups=["Input"]]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.6
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_placeholder_color = Color(0.6059017, 1, 0.20270237, 0.6)
 theme_override_fonts/font = ExtResource("2_8bucj")
@@ -118,12 +121,22 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_cruaf")
 placeholder_text = "Unesite reč ✏️"
 alignment = 1
-max_length = 12
+max_length = 10
 caret_blink = true
+
+[node name="TextCount" type="Label" parent="GUI/HBoxContainer/InputAndCounting/InputMargin/Input" unique_id=436779969]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.2
+theme_override_font_sizes/font_size = 25
+text = "0/10"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="StartButton" type="Button" parent="GUI/HBoxContainer/InputAndCounting/InputMargin/Input" unique_id=424280843]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.4
 text = "Pokreni"
 
 [node name="InputDisplayMargin" type="MarginContainer" parent="GUI/HBoxContainer/InputAndCounting" unique_id=1946864348]
@@ -139,7 +152,7 @@ theme_override_fonts/normal_font = ExtResource("3_g5gj0")
 theme_override_font_sizes/normal_font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_5shiy")
 bbcode_enabled = true
-text = "abracadabra"
+text = "a"
 fit_content = true
 scroll_active = false
 horizontal_alignment = 1
@@ -259,13 +272,49 @@ theme_override_constants/margin_bottom = 10
 [node name="Panel" type="Panel" parent="GUI/HBoxContainer/Tree/MarginContainer" unique_id=2078554869]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_g5gj0")
+script = ExtResource("11_5shiy")
 
-[node name="ShannonTreeVisualizer" type="Control" parent="GUI/HBoxContainer/Tree/MarginContainer" unique_id=718538646 groups=["ShannonTreeVisualizer"]]
+[node name="VBoxContainer" type="VBoxContainer" parent="GUI/HBoxContainer/Tree/MarginContainer" unique_id=1817974007]
+layout_mode = 2
+
+[node name="ShannonTreeVisualizer" type="Control" parent="GUI/HBoxContainer/Tree/MarginContainer/VBoxContainer" unique_id=718538646 groups=["ShannonTreeVisualizer"]]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.5
+size_flags_stretch_ratio = 0.85
 mouse_filter = 1
 script = ExtResource("5_fxa2o")
+
+[node name="Coded" type="MarginContainer" parent="GUI/HBoxContainer/Tree/MarginContainer/VBoxContainer" unique_id=1332332960]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.15
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GUI/HBoxContainer/Tree/MarginContainer/VBoxContainer/Coded" unique_id=1630613499]
+layout_mode = 2
+
+[node name="Decoded" type="RichTextLabel" parent="GUI/HBoxContainer/Tree/MarginContainer/VBoxContainer/Coded/VBoxContainer" unique_id=829493558]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 0.015686275, 0, 1)
+theme_override_font_sizes/normal_font_size = 48
+bbcode_enabled = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("13_a4oyw")
+
+[node name="Coded" type="RichTextLabel" parent="GUI/HBoxContainer/Tree/MarginContainer/VBoxContainer/Coded/VBoxContainer" unique_id=1437219974]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 48
+bbcode_enabled = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("13_a4oyw")
 
 [node name="InputAnalysisTimer" type="Timer" parent="." unique_id=1366409880]
 one_shot = true
@@ -274,6 +323,10 @@ one_shot = true
 wait_time = 2.0
 one_shot = true
 
+[node name="CodingTimer" type="Timer" parent="." unique_id=1590945079]
+one_shot = true
+
 [connection signal="pressed" from="GUI/HBoxContainer/InputAndCounting/InputMargin/Input/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="timeout" from="InputAnalysisTimer" to="." method="_on_input_analysis_timer_timeout"]
 [connection signal="timeout" from="TreeTimer" to="." method="_on_tree_timer_timeout"]
+[connection signal="timeout" from="CodingTimer" to="." method="_on_coding_timer_timeout"]
