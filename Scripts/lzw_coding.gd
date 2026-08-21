@@ -17,6 +17,8 @@ var p : String = ""
 var codes : Array[int] = []
 var code_pos : int = -1
 var old : int
+var started_decoding : bool = false
+var last_highlighted : int = -1
 
 @onready var text_count_label : Label = $GUI/HBoxContainer/Input/MarginContainer/Input/TextCount
 
@@ -57,6 +59,12 @@ func _on_start_button_pressed() -> void:
 	inputDisplay.set_new_input_text(input_text)
 
 func _on_coding_timer_timeout() -> void:
+	var finished_coding : bool = next_coding_step()
+	
+	if not finished_coding:
+		coding_timer.start()
+
+func next_coding_step() -> bool:
 	inputDisplay.highlight_char(input_pos)
 	var c : String = input_text[input_pos]
 	
@@ -68,38 +76,66 @@ func _on_coding_timer_timeout() -> void:
 		lzw_dict.add_symbol(string)
 		var code_word : String = str(lzw_dict.get_code(string))
 		
-		lzw_step_table.add_output_step(p, c, output_code)
+		var step_text : String = ""
+		step_text += "P = " + "[color=red]" + p + "[/color]" 
+		step_text += ", C = " + "[color=blue]" + c + "[/color] | "
+		step_text += "P + C = " + "[color=green]" + p + c + "[/color] (NIJE U REČNIKU) | "
+		step_text += "Na izlazu kod za P: " + output_code + " | "
+		step_text += "P = " + "[color=blue]" + c + "[/color]"
+		
+		lzw_step_table.add_step(step_text)
 		
 		codes.append(lzw_dict.get_code(p))
-		coded.append_text(" " + output_code)
+		coded.add_substr(" " + output_code)
 		p = c
 		
 		lzw_dict.add_row([output_code, representing, code_word, string])
 	else:
-		lzw_step_table.add_normal_step(p, c)
+		var step_text : String = ""
+		step_text += "P = " + "[color=red]" + p + "[/color]" 
+		step_text += ", C = " + "[color=blue]" + c + "[/color] | "
+		step_text += "P + C = " + "[color=green]" + p + c + "[/color] (JESTE U REČNIKU) | "
+		step_text += "P = " + "[color=green]" + p + c + "[/color]"
+		
+		lzw_step_table.add_step(step_text)
 		p = p+c
 	
 	input_pos += 1
-	if input_pos < input_text.length():
-		coding_timer.start()
-	else:
-		coded.append_text(" " + str(lzw_dict.get_code(p)))
+	var finished : bool = input_pos >= input_text.length() 
+	
+	if finished:
+		coded.add_substr(" " + str(lzw_dict.get_code(p)))
 		codes.append(lzw_dict.get_code(p))
-		
-		await get_tree().create_timer(1).timeout
-		
-		lzw_dict.reset()
-		code_pos = 0
-		
-		old = codes[code_pos]
-		decoded.append_text(lzw_dict.get_symbol(old))
-		code_pos += 1
-		
-		if code_pos < codes.size():
-			decoding_timer.start()
+	
+	return finished
+
+func start_decoding():
+	lzw_dict.reset()
+	lzw_dict.set_columns(["Izlazni simbol", "Kod", "Kod", "Simbol"])
+	code_pos = 0
+	
+	lzw_step_table.reset()
+	
+	old = codes[code_pos]
+	last_highlighted = coded.highlight_substr(str(old), 0)
+	var s : String = lzw_dict.get_symbol(old)
+	decoded.add_substr(s)
+	code_pos += 1
+	
+	lzw_step_table.add_step("Old= " + str(old) + ", S= " + s)
+	
+	if code_pos < codes.size():
+		decoding_timer.start()
 
 func _on_decoding_timer_timeout() -> void:
+	var finished_decoding : bool = next_decode_step()
+	
+	if not finished_decoding:
+		decoding_timer.start()
+
+func next_decode_step() -> bool:
 	var new : int = codes[code_pos]
+	last_highlighted = coded.highlight_substr(str(new), last_highlighted)
 	
 	var s : String
 	if not lzw_dict.containts_code(new):
@@ -109,10 +145,25 @@ func _on_decoding_timer_timeout() -> void:
 		s = lzw_dict.get_symbol(new)
 	
 	var c : String = s[0]
-	decoded.append_text(s)
-	lzw_dict.add_symbol(lzw_dict.get_symbol(old) + c)
+	decoded.add_substr(s)
+	var new_symbol : String = lzw_dict.get_symbol(old) + c 
+	lzw_dict.add_symbol(new_symbol)
+	
+	var output_symbol : String = s
+	var output_code : String = str(lzw_dict.get_code(s))
+	var new_symbol_code : String = str(lzw_dict.get_code(new_symbol))
+	
+	lzw_dict.add_row([output_symbol, output_code, new_symbol, new_symbol_code])
+	
 	old = new
 	
+	lzw_step_table.add_step(
+		"Old= " + str(old) + ", S= " + s + ", New= " + str(new) + ", C= " + c
+	)
+	
 	code_pos += 1
-	if code_pos < codes.size():
-		decoding_timer.start()
+	var finished : bool = code_pos >= codes.size()
+	return finished
+
+func _on_start_decoding_pressed() -> void:
+	start_decoding()

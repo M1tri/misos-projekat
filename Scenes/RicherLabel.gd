@@ -19,6 +19,27 @@ func highlight_char(char_pos : int):
 	
 	self.text = new_label_text
 
+func add_substr(substr : String):
+	display_text += substr
+	self.text = display_text
+
+func highlight_substr(substr : String, from : int) -> int:
+	var substr_start : int = display_text.find(substr, from)
+	if substr_start == -1:
+		return -1
+	
+	var new_text : String = ""
+	for i in range(0, display_text.length()):
+		if i == substr_start:
+			new_text += "[color=red]"
+		elif i == substr_start+substr.length():
+			new_text += "[/color]"
+		
+		new_text += display_text[i]
+	
+	self.text = new_text
+	return substr_start+substr.length()
+
 func get_char(char_pos : int) -> String:
 	if char_pos < 0 or char_pos >= display_text.length():
 		return ""
