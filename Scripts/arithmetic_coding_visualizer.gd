@@ -6,7 +6,10 @@ const TOP_PADDING : int = 40
 var number_lines : Array[ArithmeticNumberLine] = []
 var numberLine_spacing : float
 
-signal processing_symbol(symbolPos : int)
+signal processing_symbol(numberLine : ArithmeticNumberLine)
+
+signal finished_step(start : float, end : float)
+signal finished_coding(code : float)
 
 var other_lines : Array[Line2D] = []
 
@@ -47,9 +50,17 @@ func calculate_numberLine_spacing(total_lines : int):
 func get_number_line_y_pos(prev_number_lines):
 	return TOP_PADDING + prev_number_lines * numberLine_spacing
 
-func arithmetic_compress(message : String):
+var message : String
+var messsage_pos : int
+
+var symbol_percentages : Dictionary[String, float] = {}
+var points : Array[float] = []
+var symbols : Array[String] = []
+
+func beggin_compression(input_message : String):
+	message = input_message
+	messsage_pos = 0
 	calculate_numberLine_spacing(message.length())
-	var symbol_percentages : Dictionary[String, float] = {}
 	
 	for s in message:
 		if s in symbol_percentages:
@@ -60,27 +71,30 @@ func arithmetic_compress(message : String):
 	for s in symbol_percentages:
 		symbol_percentages[s] = symbol_percentages[s] / message.length()
 	
-	var points : Array[float] = get_points(0, 1, symbol_percentages)
-	var symbols : Array[String] = symbol_percentages.keys()
+	points = get_points(0, 1, symbol_percentages)
+	symbols = symbol_percentages.keys()
 	
 	await draw_number_line(points, symbols)
-	
-	for i in range(0, message.length()-1):
-		processing_symbol.emit(i)
-		var pos : int = symbols.find(message[i])
+	finished_step.emit(number_lines.back())
+
+func next_step():
+	if messsage_pos != message.length()-1:
+		var pos : int = symbols.find(message[messsage_pos])
 		
 		assert(pos != -1, "Should not happen, every symbol from message has to be here")
 		
-		await add_lines(number_lines.back().get_symbol_interval(message[i]))
+		await add_lines(number_lines.back().get_symbol_interval(message[messsage_pos]))
 		
 		var start : float = points[pos]
 		var end : float = points[pos+1]
 		
 		points = get_points(start, end, symbol_percentages)
 		await draw_number_line(points, symbols)
-	
-	processing_symbol.emit(message.length()-1)
-	code = await number_lines.back().mark_interval_midpoint(message[message.length()-1])
+		finished_step.emit(number_lines.back())
+	else:
+		code = await number_lines.back().mark_interval_midpoint(message[message.length()-1])
+		finished_coding.emit(code)
+	messsage_pos += 1
 
 func add_lines(symbolInterval : Array[float]):
 		var lastNumberLine : ArithmeticNumberLine = number_lines.back()

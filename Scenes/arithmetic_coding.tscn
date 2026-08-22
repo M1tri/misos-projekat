@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://brpry3lgc68xa" path="res://misos-projekat/Scripts/input_display.gd" id="4_v0s86"]
 [ext_resource type="Texture2D" uid="uid://c3raecdq861wd" path="res://misos-projekat/assets/sponge64.png" id="4_yo0gj"]
 [ext_resource type="Script" uid="uid://mm66oc1qb3kl" path="res://misos-projekat/Scenes/arithemtic_notebok.gd" id="5_luvch"]
+[ext_resource type="FontFile" uid="uid://ca38i2bshkcqm" path="res://misos-projekat/assets/fonts/AnnieUseYourTelescope-Regular.ttf" id="6_ncp0e"]
 [ext_resource type="Script" uid="uid://bikyrlsclps0p" path="res://misos-projekat/Scripts/eraser.gd" id="6_x6mlg"]
 [ext_resource type="PackedScene" uid="uid://5df0b4j67vw0" path="res://misos-projekat/Scenes/arithmetic_number_line.tscn" id="9_kk0bk"]
 
@@ -156,7 +157,8 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 9.0
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/normal_font_size = 24
+theme_override_fonts/normal_font = ExtResource("6_ncp0e")
+theme_override_font_sizes/normal_font_size = 28
 bbcode_enabled = true
 
 [node name="Buttons" type="HBoxContainer" parent="GUI/HBoxContainer/VBoxContainer/Notebook/Notebook/Page/Content/Content" unique_id=471272167]

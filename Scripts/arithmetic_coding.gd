@@ -31,10 +31,10 @@ func _ready() -> void:
 	input.text_changed.connect(input_changed)
 	
 	arithmeticCodingVisualizer = get_tree().get_first_node_in_group("ACV")
-	arithmeticCodingVisualizer.processing_symbol.connect(highlight)
+	arithmeticCodingVisualizer.finished_step.connect(next_code_step)
+	arithmeticCodingVisualizer.finished_coding.connect(finish_coding)
 	
 	arithmetic_notebook = get_tree().get_first_node_in_group("ArithmeticNotebook")
-	print(arithmetic_notebook)
 	
 	start_button.disabled = true
 
@@ -56,7 +56,7 @@ func _on_start_button_pressed() -> void:
 
 func start_input_analysis():
 	arithmetic_notebook.display_text(
-		"Prvi korak je da vidimo koji sve karakteri ima i kolko put se svaki javlja",
+		"1) Za svaki simbol određuje se broj njegovih pojavljivanja u ulaznom nizu.",
 		2.0
 		)
 	
@@ -67,6 +67,20 @@ func start_input_analysis():
 	
 	input_pos = 0
 	inputAnalysisTimer.start()
+	
+func _on_input_analysis_timer_timeout() -> void:
+	if input_pos >= input_text.length():
+		finish_input_analysis()
+		return
+	
+	var nextChar : String = input_text[input_pos]
+	
+	symbolTable.process_symbol(nextChar)
+	inputDisplay.highlight_char(input_pos)
+	
+	input_pos += 1
+	
+	inputAnalysisTimer.start()
 
 func finish_input_analysis():
 	inputDisplay.reset_highlight()
@@ -75,8 +89,9 @@ func finish_input_analysis():
 	arithmetic_notebook.clear_buttons()
 	
 	arithmetic_notebook.display_text(
-		"Nakon toga neophodno je da odredimo verovatnoce za svaki simbol " +
-		"tako sto cemo broj pojavljivanja svakog simbola podeliti ukupnim brojem simbola.",
+		"2) Nakon toga, neophodno je da odredimo verovatnoće za svaki simbol. " +
+		"Verovatnoća simbola dobija se deljenjem broja njegovih pojavljivanja " + 
+		"sa ukupnim brojem simbola u ulaznom nizu.\n\tP(s) = broj pojavljivanja simbola / ukupan broj simbola",
 		2.0
 	)
 	
@@ -98,9 +113,10 @@ func finish_input_analysis():
 		count[c] = count[c] / input_text.length()
 	
 	arithmetic_notebook.display_text(
-		"Na primer za simbol " + input_text[0] + " on se pojavljuje " + str(first_count) + " puta " +
-		"a ukupan broj simbola je " + str(input_text.length()) + " , na osnovu toga njegovu verovatnocu racunamo kao " + 
-		str(first_count) + "/" + str(input_text.length()) + " = " + str(count[input_text[0]]).pad_decimals(2), 
+		"Na primer za simbol " + input_text[0] + ", broj njegovih pojavljivanja je " + 
+		str(first_count) + ", a ulazni niz je dužine " + str(input_text.length()) + ", pa je na osnovu formule:" +
+		"\n\tP(" + input_text[0] + ") = " + str(first_count) + " / " + str(input_text.length()) + " = " 
+		+ str(count[input_text[0]]).pad_decimals(2),
 		2.0
 	)
 	
@@ -115,24 +131,100 @@ func finish_input_analysis():
 	for c in count:
 		symbolTable.change_symbol_counter_text(c, str(count[c]).pad_decimals(2))
 	
-	symbolTable.sort()
+	arithmetic_notebook.clear_text()
+	arithmetic_notebook.clear_buttons()
 	
-	#arithmeticCodingVisualizer.arithmetic_compress(input_text)
+	arithmetic_notebook.display_text(
+		"3) Početni interval [0,1) deli se prema verovatnoćama simbola. " +
+		"Za svaki simbol izračunava dužina podintervala po formuli:\n" +
+		"(G−D)⋅P(s)\nG - gornja granica intervala\nD - donja granica intervala " + 
+		"Dodavanjem te dužine na trenutnu poziciju dobija se gornja granica podintervala. ",
+		2.0
+	)
+	
+	await arithmetic_notebook.displayed_text
+	await arithmetic_notebook.add_button("Dalje").pressed
+	
+	var unique : Array[String] = count.keys()
+	
+	const max_primer : int = 2
+	var prev : float = 0
+	for i in range(0, unique.size()):
+		if i >= max_primer:
+			break
+		var cur : String = unique[i]
+		
+		var msg : String = ""
+		msg += "Simbol " + str(cur) + ":\n"
+		msg += "Trenutna pozicija: " + str(prev) + "\n"
+		msg += "(G - D) * P(" + cur + ") = (1 - 0) * " + str(count[cur]).pad_decimals(2) + " = " + str(count[cur]).pad_decimals(2) + "\n"
+		var new : float = prev + count[cur]
+		msg += str(prev).pad_decimals(2) + " + " + str(count[cur]).pad_decimals(2) + " = " + str(new).pad_decimals(2)
+		prev = new
+		
+		arithmetic_notebook.clear_buttons()
+		arithmetic_notebook.display_text(
+			msg,
+			2.0
+		)
+		await arithmetic_notebook.displayed_text
+		await arithmetic_notebook.add_button("Dalje").pressed
+	
+	arithmeticCodingVisualizer.beggin_compression(input_text)
+	input_pos = 0
 
-
-func _on_input_analysis_timer_timeout() -> void:
-	if input_pos >= input_text.length():
-		finish_input_analysis()
+func next_code_step(number_line : ArithmeticNumberLine):
+	inputDisplay.highlight_char(input_pos)
+	arithmetic_notebook.clear_text()
+	arithmetic_notebook.clear_buttons()
+	
+	if input_pos == input_text.length()-1:
+		arithmetic_notebook.display_text(
+			"5) Došli smo do poslednjeg simbola u nizu a to je " + input_text[input_pos] + ". " +
+			"Potrebno je da izaberemo bilo koji broj iz njegovog podintervala i taj broj će " +
+			"jednoznačno predstavljati ulazni niz. Ovde se, radi ilustracije, bira se sredina intervala.",
+			3.0
+		)
+		await arithmetic_notebook.displayed_text
+		
+		await arithmetic_notebook.add_button("Odredi sredinu").pressed
+		arithmeticCodingVisualizer.next_step()
 		return
 	
-	var nextChar : String = input_text[input_pos]
+	if input_pos == 0:
+		arithmetic_notebook.display_text(
+			"4) Za svaki simbol bira se njegov podinterval, koji postaje novi trenutni interval " +
+			"i ponovo se deli prema verovatnoćama simbola. Tako se interval postepeno sužava.",
+			1.0
+		)
+		await arithmetic_notebook.displayed_text
+		await arithmetic_notebook.add_button("Dalje").pressed
+		arithmetic_notebook.clear_buttons()
 	
-	symbolTable.process_symbol(nextChar)
-	inputDisplay.highlight_char(input_pos)
+	arithmetic_notebook.clear_text()
 	
+	var curr : String = input_text[input_pos]
+	
+	var subinterval : Array[float] = number_line.get_symbol_numeric_interval(curr)
+	arithmetic_notebook.display_text(
+		"Sada obrađujemo simbol " + curr + " i ulazimo u njegov podinterval. " +
+		"Podintervali se određuju po istom principu samo je sada " + 
+		"\nD = " + str(subinterval[0]).pad_decimals(6) + "\nG = " + str(subinterval[1]).pad_decimals(6),
+		2.0
+	)
+	
+	var button : Button = arithmetic_notebook.add_button("Udji u podinterval za simbol " + curr)
+	
+	await button.pressed
+	arithmeticCodingVisualizer.next_step()
 	input_pos += 1
-	
-	inputAnalysisTimer.start()
+
+func finish_coding(code : float):
+	arithmetic_notebook.append_text(
+		"\nKod za niz " + input_text + " je: " + str(code).pad_decimals(6),
+		2.0
+	)
+
 
 func highlight(text_pos : int):
 	inputDisplay.highlight_char(text_pos)

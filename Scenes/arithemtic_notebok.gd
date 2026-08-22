@@ -26,6 +26,21 @@ func display_text(text : String, duration : float):
 		duration
 	).finished.connect(func (): displayed_text.emit())
 
+func append_text(text : String, duration : float):
+	var old_char_count : int = text_label.get_total_character_count()
+	text_label.append_text(text)
+	
+	var char_count : int = text_label.get_total_character_count()
+	text_label.visible_characters = old_char_count
+
+	var visible_chars_tween : Tween = text_label.create_tween()
+	visible_chars_tween.tween_property(
+		text_label,
+		"visible_characters",
+		char_count,
+		duration
+	).finished.connect(func (): displayed_text.emit())
+
 func clear_text():
 	text_label.text = ""
 

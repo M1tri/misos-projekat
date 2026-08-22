@@ -373,6 +373,5 @@ one_shot = true
 one_shot = true
 
 [connection signal="pressed" from="GUI/HBoxContainer/Input/MarginContainer/Input/StartButton" to="." method="_on_start_button_pressed"]
-[connection signal="pressed" from="GUI/HBoxContainer/Input/Help/StartDecoding" to="." method="_on_start_decoding_pressed"]
 [connection signal="timeout" from="CodingTimer" to="." method="_on_coding_timer_timeout"]
 [connection signal="timeout" from="DecodingTimer" to="." method="_on_decoding_timer_timeout"]

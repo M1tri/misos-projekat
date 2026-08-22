@@ -168,6 +168,12 @@ func get_symbol_interval(symbol : String) -> Array[float]:
 		return [symbol_subintervals[symbol].start, symbol_subintervals[symbol].end]
 	return []
 
+func get_symbol_numeric_interval(symbol : String) -> Array[float]:
+	if symbol in symbol_subintervals:
+		return [symbol_subintervals[symbol].start_num, symbol_subintervals[symbol].end_num]
+	return []
+
+
 func mark_interval_midpoint(symbol : String) -> float:
 	if symbol not in symbol_subintervals:
 		return -1
