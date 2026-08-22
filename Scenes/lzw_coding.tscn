@@ -5,25 +5,17 @@
 [ext_resource type="Script" uid="uid://ciwaqq0u8p2jy" path="res://misos-projekat/Scripts/lzw_coding.gd" id="1_wim7o"]
 [ext_resource type="Script" uid="uid://brpry3lgc68xa" path="res://misos-projekat/Scripts/input_display.gd" id="2_ifio7"]
 [ext_resource type="Texture2D" uid="uid://c3raecdq861wd" path="res://misos-projekat/assets/sponge64.png" id="3_ifio7"]
+[ext_resource type="Script" uid="uid://b7vyapbs3nx8o" path="res://misos-projekat/Scripts/spine.gd" id="4_0yttc"]
 [ext_resource type="Script" uid="uid://bikyrlsclps0p" path="res://misos-projekat/Scripts/eraser.gd" id="4_dr71u"]
+[ext_resource type="Script" uid="uid://mm66oc1qb3kl" path="res://misos-projekat/Scenes/coding_notebok.gd" id="5_ooi3l"]
 [ext_resource type="Texture2D" uid="uid://ngj7sbcxh6ew" path="res://misos-projekat/assets/clamp128.png" id="6_id6qt"]
+[ext_resource type="FontFile" uid="uid://ca38i2bshkcqm" path="res://misos-projekat/assets/fonts/AnnieUseYourTelescope-Regular.ttf" id="6_yu2fi"]
 [ext_resource type="Script" uid="uid://cnn1grv6qa2m3" path="res://misos-projekat/Scripts/lzw_dictionary.gd" id="7_bucmh"]
 [ext_resource type="Script" uid="uid://cct1lpk2w21fn" path="res://misos-projekat/Scenes/RicherLabel.gd" id="7_wccgy"]
 [ext_resource type="Script" uid="uid://dtku4nmphbf4k" path="res://misos-projekat/Scripts/lzw_step_tabel.gd" id="8_bwy32"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tmh68"]
 bg_color = Color(0.41960785, 0.6431373, 0.6784314, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dr71u"]
-bg_color = Color(0.15294118, 0.29803923, 0.2627451, 1)
-border_width_left = 8
-border_width_top = 8
-border_width_right = 8
-border_width_bottom = 8
-border_color = Color(0.4, 0.25882354, 0.15686275, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wim7o"]
-bg_color = Color(0.15294118, 0.29803923, 0.2627451, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0yttc"]
 bg_color = Color(0.5803922, 0.43137255, 0.2901961, 1)
@@ -72,6 +64,27 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0, 0, 0, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vir11"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_epign"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dr71u"]
+bg_color = Color(0.15294118, 0.29803923, 0.2627451, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0.4, 0.25882354, 0.15686275, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wim7o"]
+bg_color = Color(0.15294118, 0.29803923, 0.2627451, 1)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_45l5i"]
 bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 10
@@ -95,94 +108,23 @@ script = ExtResource("1_wim7o")
 [node name="GUI" type="PanelContainer" parent="." unique_id=1669839754]
 layout_mode = 0
 offset_right = 1920.0
-offset_bottom = 1080.0
+offset_bottom = 1042.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_tmh68")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GUI" unique_id=488396409]
 layout_mode = 2
+theme_override_constants/separation = 60
 
 [node name="Input" type="VBoxContainer" parent="GUI/HBoxContainer" unique_id=1968629013]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.4
-
-[node name="MarginContainer" type="MarginContainer" parent="GUI/HBoxContainer/Input" unique_id=151135994]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="Input" type="HBoxContainer" parent="GUI/HBoxContainer/Input/MarginContainer" unique_id=1494452280]
-layout_mode = 2
-
-[node name="Input" type="LineEdit" parent="GUI/HBoxContainer/Input/MarginContainer/Input" unique_id=1966979641 groups=["Input"]]
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-max_length = 16
-
-[node name="TextCount" type="Label" parent="GUI/HBoxContainer/Input/MarginContainer/Input" unique_id=364381398]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "0/12"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="StartButton" type="Button" parent="GUI/HBoxContainer/Input/MarginContainer/Input" unique_id=869168257]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Pokreni"
-
-[node name="Display" type="MarginContainer" parent="GUI/HBoxContainer/Input" unique_id=722170261]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="RichTextLabel" type="RichTextLabel" parent="GUI/HBoxContainer/Input/Display" unique_id=1005235267 groups=["InputDisplay"]]
-layout_mode = 2
-theme_override_fonts/normal_font = ExtResource("1_6w1y2")
-theme_override_font_sizes/normal_font_size = 42
-theme_override_styles/normal = SubResource("StyleBoxFlat_dr71u")
-bbcode_enabled = true
-text = "gfgfgff"
-fit_content = true
-horizontal_alignment = 1
-vertical_alignment = 1
-script = ExtResource("2_ifio7")
-
-[node name="EraserPanel" type="MarginContainer" parent="GUI/HBoxContainer/Input/Display/RichTextLabel" unique_id=606427236]
-layout_mode = 0
-offset_left = 3.0
-offset_top = -1.0
-offset_right = 740.0
-offset_bottom = 67.0
-theme_override_constants/margin_left = 665
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
-
-[node name="Panel" type="Panel" parent="GUI/HBoxContainer/Input/Display/RichTextLabel/EraserPanel" unique_id=1243567592]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wim7o")
-
-[node name="Eraser" type="Sprite2D" parent="GUI/HBoxContainer/Input/Display/RichTextLabel" unique_id=1906579821]
-texture_filter = 1
-position = Vector2(700, 30)
-texture = ExtResource("3_ifio7")
-script = ExtResource("4_dr71u")
+size_flags_stretch_ratio = 3.0
 
 [node name="Table" type="MarginContainer" parent="GUI/HBoxContainer/Input" unique_id=1986538181]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 10.0
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 75
-theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 20
 
 [node name="Panel" type="Panel" parent="GUI/HBoxContainer/Input/Table" unique_id=1698385836]
@@ -208,7 +150,7 @@ theme_override_constants/margin_right = 30
 theme_override_constants/margin_bottom = 30
 
 [node name="Clip" type="Sprite2D" parent="GUI/HBoxContainer/Input/Table/MarginContainer" unique_id=720055282]
-position = Vector2(374, -17)
+position = Vector2(192, -11)
 texture = ExtResource("6_id6qt")
 
 [node name="DictionaryTable" type="VBoxContainer" parent="GUI/HBoxContainer/Input/Table/MarginContainer" unique_id=1133876070 groups=["LZWDict"]]
@@ -278,25 +220,138 @@ text = "Simbol"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Help" type="MarginContainer" parent="GUI/HBoxContainer/Input" unique_id=225561518]
+[node name="Notebook" type="MarginContainer" parent="GUI/HBoxContainer/Input" unique_id=225561518]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 6.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="StartDecoding" type="Button" parent="GUI/HBoxContainer/Input/Help" unique_id=1239797457]
+[node name="Notebook" type="HBoxContainer" parent="GUI/HBoxContainer/Input/Notebook" unique_id=90754037]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-text = "Start decoding"
+theme_override_constants/separation = 0
+
+[node name="Spine" type="Panel" parent="GUI/HBoxContainer/Input/Notebook/Notebook" unique_id=691768972]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.1
+theme_override_styles/panel = SubResource("StyleBoxFlat_vir11")
+script = ExtResource("4_0yttc")
+
+[node name="Page" type="MarginContainer" parent="GUI/HBoxContainer/Input/Notebook/Notebook" unique_id=1656616963]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.9
+
+[node name="PageBackground" type="Panel" parent="GUI/HBoxContainer/Input/Notebook/Notebook/Page" unique_id=1722241687]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.6
+theme_override_styles/panel = SubResource("StyleBoxFlat_epign")
+
+[node name="Content" type="MarginContainer" parent="GUI/HBoxContainer/Input/Notebook/Notebook/Page" unique_id=1472990260]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 20
+
+[node name="Content" type="VBoxContainer" parent="GUI/HBoxContainer/Input/Notebook/Notebook/Page/Content" unique_id=1491883513 groups=["ArithmeticNotebook"]]
+layout_mode = 2
+script = ExtResource("5_ooi3l")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GUI/HBoxContainer/Input/Notebook/Notebook/Page/Content/Content" unique_id=1137514775]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 9.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("6_yu2fi")
+theme_override_font_sizes/normal_font_size = 28
+bbcode_enabled = true
+
+[node name="Buttons" type="HBoxContainer" parent="GUI/HBoxContainer/Input/Notebook/Notebook/Page/Content/Content" unique_id=1342254461]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
 
 [node name="Visualization" type="VBoxContainer" parent="GUI/HBoxContainer" unique_id=1373317949]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.6
+size_flags_stretch_ratio = 8.0
+
+[node name="MarginContainer" type="MarginContainer" parent="GUI/HBoxContainer/Visualization" unique_id=151135994]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 5
+
+[node name="Input" type="HBoxContainer" parent="GUI/HBoxContainer/Visualization/MarginContainer" unique_id=1494452280]
+layout_mode = 2
+
+[node name="Input" type="LineEdit" parent="GUI/HBoxContainer/Visualization/MarginContainer/Input" unique_id=1966979641 groups=["Input"]]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+max_length = 16
+
+[node name="TextCount" type="Label" parent="GUI/HBoxContainer/Visualization/MarginContainer/Input" unique_id=364381398]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0/12"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartButton" type="Button" parent="GUI/HBoxContainer/Visualization/MarginContainer/Input" unique_id=869168257]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pokreni"
+
+[node name="Display" type="MarginContainer" parent="GUI/HBoxContainer/Visualization" unique_id=722170261]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 5
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GUI/HBoxContainer/Visualization/Display" unique_id=1005235267 groups=["InputDisplay"]]
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("1_6w1y2")
+theme_override_font_sizes/normal_font_size = 42
+theme_override_styles/normal = SubResource("StyleBoxFlat_dr71u")
+bbcode_enabled = true
+text = "gfgfgff"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_ifio7")
+
+[node name="EraserPanel" type="MarginContainer" parent="GUI/HBoxContainer/Visualization/Display/RichTextLabel" unique_id=606427236]
+layout_mode = 0
+offset_left = 3.0
+offset_top = -1.0
+offset_right = 1309.0
+offset_bottom = 67.0
+theme_override_constants/margin_left = 1200
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Panel" type="Panel" parent="GUI/HBoxContainer/Visualization/Display/RichTextLabel/EraserPanel" unique_id=1243567592]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wim7o")
+
+[node name="Eraser" type="Sprite2D" parent="GUI/HBoxContainer/Visualization/Display/RichTextLabel" unique_id=1906579821]
+texture_filter = 1
+position = Vector2(1269, 37)
+texture = ExtResource("3_ifio7")
+script = ExtResource("4_dr71u")
 
 [node name="Board" type="MarginContainer" parent="GUI/HBoxContainer/Visualization" unique_id=31915267]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 16.0
 theme_override_constants/margin_left = 25
 theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 25
@@ -329,7 +384,7 @@ theme_override_constants/margin_bottom = 25
 
 [node name="StepTable" type="VBoxContainer" parent="GUI/HBoxContainer/Visualization/Board/VBoxContainer/Steps/StepTableMargin" unique_id=1839206073 groups=["LZWStepTable"]]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 script = ExtResource("8_bwy32")
 
 [node name="MarginContainer" type="MarginContainer" parent="GUI/HBoxContainer/Visualization/Board/VBoxContainer" unique_id=2051080638]
@@ -372,6 +427,6 @@ one_shot = true
 [node name="DecodingTimer" type="Timer" parent="." unique_id=800854278]
 one_shot = true
 
-[connection signal="pressed" from="GUI/HBoxContainer/Input/MarginContainer/Input/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="GUI/HBoxContainer/Visualization/MarginContainer/Input/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="timeout" from="CodingTimer" to="." method="_on_coding_timer_timeout"]
 [connection signal="timeout" from="DecodingTimer" to="." method="_on_decoding_timer_timeout"]

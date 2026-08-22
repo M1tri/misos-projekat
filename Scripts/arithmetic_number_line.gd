@@ -268,3 +268,9 @@ func mark_point(value : float):
 	
 	circle.position.x = x_cord
 	add_child(circle)
+
+func get_point_interval(point : float) -> SymbolInterval:
+	for interval : SymbolInterval in symbol_subintervals.values():
+		if point >= interval.start_num and point <= interval.end_num:
+			return interval
+	return null

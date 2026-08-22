@@ -1,4 +1,4 @@
-class_name ArithmeticNotebook
+class_name CodingNotebook
 extends VBoxContainer
 
 var text_label : RichTextLabel
@@ -44,13 +44,16 @@ func append_text(text : String, duration : float):
 func clear_text():
 	text_label.text = ""
 
-func add_button(button_text : String) -> Button:
+func add_button(button_text : String, one_press : bool = true) -> Button:
 	var button : Button = Button.new()
 	
 	button.text = button_text
 	
 	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	buttons_container.add_child(button)
+	
+	if one_press:
+		button.pressed.connect(func(): button.disabled = true)
 	
 	return button
 

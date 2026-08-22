@@ -49,3 +49,6 @@ func get_char(char_pos : int) -> String:
 func add_char(new_char : String):
 	display_text += new_char
 	self.text = display_text
+
+func turn_off_highlight():
+	self.text = display_text

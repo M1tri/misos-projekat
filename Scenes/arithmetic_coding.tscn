@@ -8,7 +8,7 @@
 [ext_resource type="FontFile" uid="uid://damk8qqt17x1c" path="res://misos-projekat/assets/fonts/CabinSketch-Bold.ttf" id="4_syfbx"]
 [ext_resource type="Script" uid="uid://brpry3lgc68xa" path="res://misos-projekat/Scripts/input_display.gd" id="4_v0s86"]
 [ext_resource type="Texture2D" uid="uid://c3raecdq861wd" path="res://misos-projekat/assets/sponge64.png" id="4_yo0gj"]
-[ext_resource type="Script" uid="uid://mm66oc1qb3kl" path="res://misos-projekat/Scenes/arithemtic_notebok.gd" id="5_luvch"]
+[ext_resource type="Script" uid="uid://mm66oc1qb3kl" path="res://misos-projekat/Scenes/coding_notebok.gd" id="5_luvch"]
 [ext_resource type="FontFile" uid="uid://ca38i2bshkcqm" path="res://misos-projekat/assets/fonts/AnnieUseYourTelescope-Regular.ttf" id="6_ncp0e"]
 [ext_resource type="Script" uid="uid://bikyrlsclps0p" path="res://misos-projekat/Scripts/eraser.gd" id="6_x6mlg"]
 [ext_resource type="PackedScene" uid="uid://5df0b4j67vw0" path="res://misos-projekat/Scenes/arithmetic_number_line.tscn" id="9_kk0bk"]
@@ -63,12 +63,15 @@ corner_radius_bottom_left = 10
 shadow_size = 5
 shadow_offset = Vector2(5, 5)
 
-[node name="ArithmeticCoding" type="Node2D" unique_id=124428836]
+[node name="ArithmeticCoding" type="Control" unique_id=928420752]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_3754d")
 
 [node name="GUI" type="PanelContainer" parent="." unique_id=818716627]
+layout_mode = 0
 offset_right = 1920.0
-offset_bottom = 1080.0
+offset_bottom = 1042.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_s8gwj")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GUI" unique_id=1211727939]

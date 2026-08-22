@@ -4,8 +4,9 @@ var inputDisplay : InputDisplay
 
 var input : LineEdit
 
-@onready var start_button : Button = $GUI/HBoxContainer/Input/MarginContainer/Input/StartButton
+@onready var start_button : Button = $GUI/HBoxContainer/Visualization/MarginContainer/Input/StartButton
 
+var notebook : CodingNotebook
 var lzw_dict : LZWDictionary
 var lzw_step_table : LZWStepTable
 
@@ -20,7 +21,7 @@ var old : int
 var started_decoding : bool = false
 var last_highlighted : int = -1
 
-@onready var text_count_label : Label = $GUI/HBoxContainer/Input/MarginContainer/Input/TextCount
+@onready var text_count_label : Label = $GUI/HBoxContainer/Visualization/MarginContainer/Input/TextCount
 
 @onready var coding_timer : Timer = $CodingTimer
 @onready var decoding_timer : Timer = $DecodingTimer
@@ -39,11 +40,18 @@ func _ready() -> void:
 	
 	lzw_step_table = get_tree().get_first_node_in_group("LZWStepTable")
 	
+	notebook = get_tree().get_first_node_in_group("ArithmeticNotebook")
+	
 	start_button.disabled = true
 
 func start_input_analysis():
 	input_pos = 0
-	coding_timer.start()
+	
+	notebook.display_text("Ajde da krenemo lmao", 2.0)
+	await notebook.displayed_text
+	
+	await notebook.add_button("Dalje").pressed
+	show_coding()
 
 func input_changed(new_text : String):
 	input_text = new_text
@@ -53,21 +61,38 @@ func input_changed(new_text : String):
 	else:
 		start_button.disabled = false
 	
-	text_count_label.text = str(input_text.length()) + "/16"
+	text_count_label.text = str(input_text.length()) + "/12"
 
 func _on_start_button_pressed() -> void:
 	inputDisplay.set_new_input_text(input_text)
 
 func _on_coding_timer_timeout() -> void:
-	var finished_coding : bool = next_coding_step()
+	pass
+
+func show_coding():
+	notebook.clear_buttons()
+	notebook.clear_text()
 	
-	if not finished_coding:
-		coding_timer.start()
+	var finished_coding : bool = false
+	while (not finished_coding):
+		finished_coding = await next_coding_step()
+		notebook.clear_buttons()
+		notebook.clear_text()
+	
+	notebook.display_text(
+		"Ce se jedu neka govna za poslednji korak",
+		2.0
+	)
+	await notebook.displayed_text
+	
+	notebook.add_button("Dalje").pressed.connect(start_decoding)
 
 func next_coding_step() -> bool:
 	inputDisplay.highlight_char(input_pos)
 	var c : String = input_text[input_pos]
-	
+
+	var step_text : String = ""
+
 	if not lzw_dict.contains(p+c):
 		var output_code : String = str(lzw_dict.get_code(p))
 		var representing : String = p
@@ -76,14 +101,11 @@ func next_coding_step() -> bool:
 		lzw_dict.add_symbol(string)
 		var code_word : String = str(lzw_dict.get_code(string))
 		
-		var step_text : String = ""
 		step_text += "P = " + "[color=red]" + p + "[/color]" 
 		step_text += ", C = " + "[color=blue]" + c + "[/color] | "
 		step_text += "P + C = " + "[color=green]" + p + c + "[/color] (NIJE U REČNIKU) | "
 		step_text += "Na izlazu kod za P: " + output_code + " | "
 		step_text += "P = " + "[color=blue]" + c + "[/color]"
-		
-		lzw_step_table.add_step(step_text)
 		
 		codes.append(lzw_dict.get_code(p))
 		coded.add_substr(" " + output_code)
@@ -91,14 +113,19 @@ func next_coding_step() -> bool:
 		
 		lzw_dict.add_row([output_code, representing, code_word, string])
 	else:
-		var step_text : String = ""
 		step_text += "P = " + "[color=red]" + p + "[/color]" 
 		step_text += ", C = " + "[color=blue]" + c + "[/color] | "
 		step_text += "P + C = " + "[color=green]" + p + c + "[/color] (JESTE U REČNIKU) | "
 		step_text += "P = " + "[color=green]" + p + c + "[/color]"
 		
-		lzw_step_table.add_step(step_text)
 		p = p+c
+	
+	lzw_step_table.add_step(step_text)
+	
+	notebook.display_text(step_text, 2.0)
+	await notebook.displayed_text
+	
+	await notebook.add_button("Dalje").pressed
 	
 	input_pos += 1
 	var finished : bool = input_pos >= input_text.length() 
@@ -106,6 +133,9 @@ func next_coding_step() -> bool:
 	if finished:
 		coded.add_substr(" " + str(lzw_dict.get_code(p)))
 		codes.append(lzw_dict.get_code(p))
+		
+		notebook.clear_text()
+		notebook.clear_buttons()
 	
 	return finished
 
@@ -113,6 +143,9 @@ func start_decoding():
 	lzw_dict.reset()
 	lzw_dict.set_columns(["Izlazni simbol", "Kod", "Kod", "Simbol"])
 	code_pos = 0
+	
+	notebook.clear_buttons()
+	notebook.clear_text()
 	
 	lzw_step_table.reset()
 	
@@ -122,16 +155,35 @@ func start_decoding():
 	decoded.add_substr(s)
 	code_pos += 1
 	
+	notebook.display_text(
+		"Da se izjedu neka govna za ovaj prvi korak\n" +
+		"Old= " + str(old) + ", S= " + s,
+		2.0
+	)
 	lzw_step_table.add_step("Old= " + str(old) + ", S= " + s)
 	
+	await notebook.displayed_text
+	
+	await notebook.add_button("Dalje").pressed
+	
 	if code_pos < codes.size():
-		decoding_timer.start()
+		show_decoding()
+
+func show_decoding():
+	var finished_decoding : bool
+	
+	while (not finished_decoding):
+		finished_decoding = await next_decode_step()
+		notebook.clear_buttons()
+		notebook.clear_text()
+	
+	notebook.display_text(
+		"Da se izjedu neka govna za kraj",
+		2.0
+	)
 
 func _on_decoding_timer_timeout() -> void:
-	var finished_decoding : bool = next_decode_step()
-	
-	if not finished_decoding:
-		decoding_timer.start()
+	pass
 
 func next_decode_step() -> bool:
 	var new : int = codes[code_pos]
@@ -160,6 +212,14 @@ func next_decode_step() -> bool:
 	lzw_step_table.add_step(
 		"Old= " + str(old) + ", S= " + s + ", New= " + str(new) + ", C= " + c
 	)
+	
+	notebook.display_text(
+		"Old= " + str(old) + ", S= " + s + ", New= " + str(new) + ", C= " + c,
+		2.0
+	)
+	
+	await notebook.displayed_text
+	await notebook.add_button("Dalje").pressed
 	
 	code_pos += 1
 	var finished : bool = code_pos >= codes.size()

@@ -6,10 +6,13 @@ const TOP_PADDING : int = 40
 var number_lines : Array[ArithmeticNumberLine] = []
 var numberLine_spacing : float
 
+@warning_ignore("unused_signal")
 signal processing_symbol(numberLine : ArithmeticNumberLine)
 
 signal finished_step(start : float, end : float)
 signal finished_coding(code : float)
+
+signal finished_decoding_step
 
 var other_lines : Array[Line2D] = []
 
@@ -57,6 +60,8 @@ var symbol_percentages : Dictionary[String, float] = {}
 var points : Array[float] = []
 var symbols : Array[String] = []
 
+var decompression_step_count : int = -1
+
 func beggin_compression(input_message : String):
 	message = input_message
 	messsage_pos = 0
@@ -77,7 +82,7 @@ func beggin_compression(input_message : String):
 	await draw_number_line(points, symbols)
 	finished_step.emit(number_lines.back())
 
-func next_step():
+func next_coding_step():
 	if messsage_pos != message.length()-1:
 		var pos : int = symbols.find(message[messsage_pos])
 		
@@ -95,6 +100,32 @@ func next_step():
 		code = await number_lines.back().mark_interval_midpoint(message[message.length()-1])
 		finished_coding.emit(code)
 	messsage_pos += 1
+
+func beggin_decompression():
+	reset()
+	
+	decompression_step_count = 0
+	
+	points = get_points(0, 1, symbol_percentages)
+	await draw_number_line(points, symbols)
+
+func mark_code() -> ArithmeticNumberLine.SymbolInterval:
+	await number_lines.back().mark_point(code)
+	var code_interval : ArithmeticNumberLine.SymbolInterval = number_lines.back().get_point_interval(code)
+	
+	return code_interval
+
+func next_decompression_step():
+	var code_interval : ArithmeticNumberLine.SymbolInterval = number_lines.back().get_point_interval(code)	
+	await add_lines([code_interval.start, code_interval.end])
+	
+	var start : float = code_interval.start_num
+	var end : float = code_interval.end_num
+	
+	points = get_points(start, end, symbol_percentages)
+	await draw_number_line(points, symbols)
+	
+	finished_decoding_step.emit()
 
 func add_lines(symbolInterval : Array[float]):
 		var lastNumberLine : ArithmeticNumberLine = number_lines.back()
@@ -256,7 +287,9 @@ func draw_shortened_pointed_line(start : Vector2, end : Vector2, length_percenta
 	add_child(arrow_line2)
 	other_lines.append(arrow_line2)
 
+@warning_ignore("shadowed_variable")
 func get_points(start : float, end : float, symbol_percentages) -> Array[float]:
+	@warning_ignore("shadowed_variable")
 	var points : Array[float] = []
 	points.append(start)
 	
@@ -268,6 +301,7 @@ func get_points(start : float, end : float, symbol_percentages) -> Array[float]:
 	
 	return points
 
+@warning_ignore("shadowed_variable")
 func draw_number_line(points : Array[float], symbols : Array[String]):
 	var numberLine : ArithmeticNumberLine = ArithmeticNumberLine.new()
 	numberLine.position.y = get_number_line_y_pos(number_lines.size())
